@@ -8,7 +8,7 @@
 | Module Tutor Name  | Jonathan Shore                     |
 | Student ID Number  | P510008                            |
 | Date of Submission | 13th February 2026                 |
-| Word Count         | 1588                               |
+| Word Count         | 1989                               |
 
 - [x] *I confirm that this assignment is my own work. Where I have referred to academic sources, I have provided in-text citations and included the sources in
   the final reference list.*
@@ -90,6 +90,18 @@ This stage identifies the main inputs, processes, and outputs of the Trail game 
 - Updated health, water, and inventory status.
 
 - Game over messages or final victory screen.
+
+*Below is a representation in a table.*
+
+| **Inputs**                                                           | **Processes**                                                                           | **Outputs**                                                     |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| **Player enters their name (string)**                                | System creates a Player object and initialises attributes (health, lives, attack power) | Welcome message and initial player stats displayed              |
+| **Player selects menu options (1 or 2) in each scenario**            | Game evaluates the selected option and executes the corresponding scenario logic        | Story text describing what happened in the scenario             |
+| **Player chooses actions during puzzles (e.g. take item or ignore)** | Game checks choice and updates player attributes accordingly                            | Updated health, lives, or attack power shown                    |
+| **Player makes combat decisions (fight or flee)**                    | Game compares player attack power with enemy difficulty                                 | Combat result message (win, lose health, or lose life)          |
+| **Player collects items (e.g. food, sword, potion)**                 | Item effects are applied to the player (increase health or attack)                      | Confirmation message showing item used and new stats            |
+| **Invalid input (not 1 or 2)**                                       | Input validation loop forces user to re-enter a valid choice                            | Error message prompting correct input                           |
+| **Completion of final scenario**                                     | Game ends and calculates final player state                                             | Final summary showing remaining lives, health, and attack power |
 
 ------------------------------------------------------------------------------------------------------------------------------
 
@@ -352,4 +364,77 @@ public:
             sword.applyItem(player);
         }
     }
+
+    void scenario4() {
+        TrailEvent event("A bandit blocks your path.");
+        event.displayEvent();
+
+        cout << "1. Fight\n2. Run" << endl;
+        int choice = getChoice();
+
+        if (choice == 1 && player.getAttackPower() < 15) {
+            player.loseHealth(30);
+        } else if (choice == 2) {
+            player.loseHealth(10);
+        }
+    }
+
+    void scenario5() {
+        TrailEvent event("You find food supplies.");
+        event.displayEvent();
+
+        cout << "1. Eat food\n2. Save it" << endl;
+        int choice = getChoice();
+
+        if (choice == 1) {
+            Item food("Food", 15, 0);
+            food.applyItem(player);
+        }
+    }
+
+    void scenario6() {
+        TrailEvent event("You reach a broken bridge.");
+        event.displayEvent();
+
+        cout << "1. Cross\n2. Go around" << endl;
+        int choice = getChoice();
+
+        if (choice == 1) {
+            player.loseHealth(20);
+        }
+    }
+
+    void scenario7() {
+        TrailEvent event("You meet a travelling merchant.");
+        event.displayEvent();
+
+        cout << "1. Trade\n2. Ignore" << endl;
+        int choice = getChoice();
+
+        if (choice == 1) {
+            Item potion("Health Potion", 25, 0);
+            potion.applyItem(player);
+        }
+    }
+
+    void scenario8() {
+        TrailEvent event("Final challenge: Desert Guardian!");
+        event.displayEvent();
+
+        cout << "1. Fight\n2. Flee" << endl;
+        int choice = getChoice();
+
+        if (choice == 1 && player.getAttackPower() < 20) {
+            player.loseHealth(40);
+        }
+    }
+};
+
+// Main
+int main() {
+    Game game;
+    game.startGame();
+    return 0;
+}
+
 ```
