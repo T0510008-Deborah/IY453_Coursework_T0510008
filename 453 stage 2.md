@@ -4,11 +4,11 @@
 | ------------------ | ---------------------------------- |
 | Group              | B                                  |
 | Module Title       | Software Design and Implementation |
-| Assessment Type    | Stage1                             |
+| Assessment Type    | Stage2                             |
 | Module Tutor Name  | Jonathan Shore                     |
 | Student ID Number  | P510008                            |
-| Date of Submission | 30th January 2026                  |
-| Word Count         | 1469                               |
+| Date of Submission | 13th February 2026                 |
+| Word Count         | 1588                               |
 
 - [x] *I confirm that this assignment is my own work. Where I have referred to academic sources, I have provided in-text citations and included the sources in
   the final reference list.*
