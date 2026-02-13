@@ -8,7 +8,7 @@
 | Module Tutor Name  | Jonathan Shore                     |
 | Student ID Number  | P510008                            |
 | Date of Submission | 30th January 2026                  |
-| Word Count         | 762                                |
+| Word Count         | 1469                               |
 
 - [x] *I confirm that this assignment is my own work. Where I have referred to academic sources, I have provided in-text citations and included the sources in
   the final reference list.*
@@ -22,7 +22,6 @@
 ------------------------------------------------------------------------------------------------------------------------------
 
 The purpose of this program is to develop a text-based adventure game. The project aims to demonstrate proficiency in Object-Oriented Programming (OOP) principles, with error handling. By creating a branching narrative, the software provides an interactive user experience where choices directly influence the game outcome.
-
 
 The game allows a player to interact with a story by making choices that affect the outcome of the game. The player navigates through different scenarios, collects items, solves puzzles, and fights enemies. Depending on the choices made, the player may either progress through the story, win the game, or reach a game over stage.
 
@@ -44,8 +43,6 @@ The game allows a player to interact with a story by making choices that affect 
 
 7. **Error Handling** - This is necessary to prevent Invalid input such as letters instead of numbers. Ask the user to retry if input is wrong and this prevent crashes.
 
-
-
 ###### Non-Functional Requirements
 
 The system must follow good software engineering principles to ensure quality and maintainability. The program should be developed using object-oriented programming concepts such as encapsulation, inheritance, and polymorphism. This means that related data and behaviours should be grouped into appropriate classes, with specialised scene types derived from a base scene class. The code should be modular and well structured so that new features, scenes, or items can be easily added in the future without major changes to the existing system.
@@ -59,7 +56,6 @@ In terms of user experience and performance, the game should provide a simple an
 ------------------------------------------------------------------------------------------------------------------------------
 
 This stage identifies the main inputs, processes, and outputs of the Trail game idea.
-
 
 **Input:** This will be the data provided by the player to interact with the system. These include:
 
@@ -94,8 +90,6 @@ This stage identifies the main inputs, processes, and outputs of the Trail game 
 - Updated health, water, and inventory status.
 
 - Game over messages or final victory screen.
-
-
 
 ------------------------------------------------------------------------------------------------------------------------------
 
@@ -165,3 +159,197 @@ END
 ![](C:\Users\user\AppData\Roaming\marktext\images\2026-01-30-12-04-10-image.png)
 
 ------------------------------------------------------------------------------------------------------------------------------
+
+##### Program Code
+
+This program implements the text-based adventure game called **Golden Dunes Trail** using object - oriented programming in C++. The system is designed around two main classes: **Player**, which stores and manages the player’s attributes, and **Game**, which controls the overall game flow and scenarios. Other classes include **item** and **trailevent**. The main function acts as the entry point and starts the game by creating a Game object and calling its **startGame()** method.
+
+The Game class presents a sequence of eight scenarios where the player must make choices that affect their health, lives, and attack power. User input is validated to ensure correct choices, and the player’s attributes are updated progressively based on the decisions made throughout the game.
+
+------------------------------------------------------------------------------------------------------------------------------
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Player
+class Player {
+private:
+    string name;
+    int health;
+    int lives;
+    int attackPower;
+
+public:
+    Player() {
+        name = "default";
+        health = 100;
+        lives = 3;
+        attackPower = 10;
+    }
+
+    Player(string tempName) {
+        name = tempName;
+        health = 100;
+        lives = 3;
+        attackPower = 10;
+    }
+
+    string getName() {
+        return name;
+    }
+
+    int getHealth() {
+        return health;
+    }
+
+    int getLives() {
+        return lives;
+    }
+
+    int getAttackPower() {
+        return attackPower;
+    }
+
+    void loseHealth(int amount) {
+        health = health - amount;
+        if (health <= 0) {
+            lives--;
+            health = 100;
+            cout << "You lost a life! Lives left: " << lives << endl;
+        }
+    }
+
+    void gainHealth(int amount) {
+        health = health + amount;
+        if (health > 100) {
+            health = 100;
+        }
+    }
+
+    void increaseAttack(int amount) {
+        attackPower = attackPower + amount;
+    }
+};
+
+// item
+class Item {
+private:
+    string name;
+    int healthBonus;
+    int attackBonus;
+
+public:
+    Item(string tempName, int tempHealthBonus, int tempAttackBonus) {
+        name = tempName;
+        healthBonus = tempHealthBonus;
+        attackBonus = tempAttackBonus;
+    }
+
+    void applyItem(Player& player) {
+        player.gainHealth(healthBonus);
+        player.increaseAttack(attackBonus);
+        cout << "You used " << name << "!" << endl;
+    }
+};
+
+// TrailEvent
+class TrailEvent {
+private:
+    string description;
+
+public:
+    TrailEvent(string tempDescription) {
+        description = tempDescription;
+    }
+
+    void displayEvent() {
+        cout << description << endl;
+    }
+};
+
+// Game
+class Game {
+private:
+    Player player;
+
+public:
+    void startGame() {
+        string name;
+        cout << "Welcome to Golden Dunes: The Lost Caravan" << endl;
+        cout << "Enter your name: ";
+        getline(cin, name);
+
+        player = Player(name);
+        runGame();
+    }
+
+    int getChoice() {
+        int choice;
+        cout << "Choose (1 or 2): ";
+        cin >> choice;
+
+        while (choice != 1 && choice != 2) {
+            cout << "Invalid choice. Enter 1 or 2: ";
+            cin >> choice;
+        }
+
+        return choice;
+    }
+
+    void runGame() {
+        scenario1();
+        scenario2();
+        scenario3();
+        scenario4();
+        scenario5();
+        scenario6();
+        scenario7();
+        scenario8();
+
+        cout << "\nCongratulations! You survived the Golden Dunes." << endl;
+    }
+
+    // 8 Scenarios
+
+    void scenario1() {
+        TrailEvent event("You find a water well in the desert.");
+        event.displayEvent();
+
+        cout << "1. Drink the water\n2. Ignore it" << endl;
+        int choice = getChoice();
+
+        if (choice == 1) {
+            Item water("Fresh Water", 20, 0);
+            water.applyItem(player);
+        } else {
+            player.loseHealth(10);
+        }
+    }
+
+    void scenario2() {
+        TrailEvent event("A sandstorm is approaching.");
+        event.displayEvent();
+
+        cout << "1. Take shelter\n2. Walk through" << endl;
+        int choice = getChoice();
+
+        if (choice == 2) {
+            player.loseHealth(20);
+        }
+    }
+
+    void scenario3() {
+        TrailEvent event("You find a rusty sword.");
+        event.displayEvent();
+
+        cout << "1. Take sword\n2. Leave it" << endl;
+        int choice = getChoice();
+
+        if (choice == 1) {
+            Item sword("Rusty Sword", 0, 5);
+            sword.applyItem(player);
+        }
+    }
+```
