@@ -355,6 +355,43 @@ public:
     }
 };
 
+// MainMenu
+void mainMenu() {
+
+    while (running) {
+
+        int choice;
+
+        cout << "\n=================================\n";
+        cout << "        GOLDEN DUNES TRAIL\n";
+        cout << "=================================\n";
+
+        cout << "1. Start New Journey\n";
+        cout << "2. How To Play\n";
+        cout << "3. Credits\n";
+        cout << "4. Exit\n";
+
+        cout << "\nEnter choice: ";
+        cin >> choice;
+
+        if (choice == 1)
+            startJourney();
+
+        else if (choice == 2)
+            showHowToPlay();
+
+        else if (choice == 3)
+            credits();
+
+        else if (choice == 4)
+            running = false;
+
+        else
+            cout << "Invalid choice.\n";
+    }
+}
+};
+
 // Main
 int main() {
     Game game;
