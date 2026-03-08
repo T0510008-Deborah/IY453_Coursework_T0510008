@@ -210,150 +210,131 @@ public:
 class Game {
 private:
     Player player;
+    Inventory inventory;
+    bool running;
 
 public:
-    void startGame() {
-        string name;
-        cout << "Welcome to Golden Dunes: The Lost Caravan" << endl;
-        cout << "Enter your name: ";
-        getline(cin, name);
 
-        player = Player(name);
-        runGame();
+    Game() {
+        running = true;
     }
 
-    int getChoice() {
-        int choice;
-        cout << "Choose (1 or 2): ";
-        cin >> choice;
+    void showHowToPlay() {
 
-        while (choice != 1 && choice != 2) {
-            cout << "Invalid choice. Enter 1 or 2: ";
+        ifstream file("howtoplay.txt");
+
+        if (!file) {
+            cout << "Help file not found.\n";
+            return;
+        }
+
+        string line;
+
+        cout << endl;
+
+        while (getline(file, line)) {
+            cout << line << endl;
+        }
+
+        file.close();
+    }
+
+    void startJourney() {
+
+        cout << "\nEnter your name: ";
+        cin >> player.name;
+
+        player.chooseRole();
+
+        cout << "\nYour journey across the Golden Dunes begins...\n";
+
+        journeyLoop();
+    }
+
+    void journeyLoop() {
+
+        while (player.distance > 0 && player.health > 0) {
+
+            int choice;
+
+            cout << "\n==============================\n";
+            cout << "Distance remaining: " << player.distance << " miles\n";
+            cout << "==============================\n";
+
+            cout << "\nJourney Menu\n";
+            cout << "1. Travel Forward\n";
+            cout << "2. Hunt for Food\n";
+            cout << "3. Rest\n";
+            cout << "4. Check Status\n";
+            cout << "5. Check Inventory\n";
+            cout << "6. Continue Journey\n";
+
+            cout << "\nEnter choice: ";
             cin >> choice;
+
+            if (choice == 1) {
+
+                cout << "\nYou travel across the dunes...\n";
+
+                player.distance -= 40;
+                inventory.food -= 10;
+
+                EventSystem::randomEvent(player, inventory);
+
+                if (rand() % 5 == 0)
+                    RiverCrossing::cross(player, inventory);
+            }
+
+            else if (choice == 2) {
+
+                if (inventory.ammo > 0) {
+                    cout << "\nYou go hunting.\n";
+
+                    inventory.food += 30;
+                    inventory.ammo -= 5;
+                } else {
+                    cout << "You have no ammo.\n";
+                }
+            }
+
+            else if (choice == 3) {
+
+                cout << "\nYou rest at camp.\n";
+                player.health += 10;
+                inventory.food -= 5;
+            }
+
+            else if (choice == 4) {
+                player.showStatus();
+            }
+
+            else if (choice == 5) {
+                inventory.show();
+            }
+
+            else if (choice == 6) {
+                cout << "The caravan moves onward...\n";
+                player.distance -= 30;
+            }
+
+            if (inventory.food <= 0) {
+                cout << "\nYou ran out of food!\n";
+                player.health -= 10;
+            }
+
+            if (player.health <= 0)
+                break;
         }
 
-        return choice;
-    }
-
-    void runGame() {
-        scenario1();
-        scenario2();
-        scenario3();
-        scenario4();
-        scenario5();
-        scenario6();
-        scenario7();
-        scenario8();
-
-        cout << "\nCongratulations! You survived the Golden Dunes." << endl;
-    }
-
-    // 8 Scenarios
-
-    void scenario1() {
-        TrailEvent event("You find a water well in the desert.");
-        event.displayEvent();
-
-        cout << "1. Drink the water\n2. Ignore it" << endl;
-        int choice = getChoice();
-
-        if (choice == 1) {
-            Item water("Fresh Water", 20, 0);
-            water.applyItem(player);
+        if (player.health <= 0) {
+            cout << "\nYour caravan did not survive the desert...\n";
         } else {
-            player.loseHealth(10);
+            cout << "\nYou reached the Golden City beyond the dunes!\n";
         }
+
+        cout << "\nJourney ended.\n";
     }
 
-    void scenario2() {
-        TrailEvent event("A sandstorm is approaching.");
-        event.displayEvent();
-
-        cout << "1. Take shelter\n2. Walk through" << endl;
-        int choice = getChoice();
-
-        if (choice == 2) {
-            player.loseHealth(20);
-        }
-    }
-
-    void scenario3() {
-        TrailEvent event("You find a rusty sword.");
-        event.displayEvent();
-
-        cout << "1. Take sword\n2. Leave it" << endl;
-        int choice = getChoice();
-
-        if (choice == 1) {
-            Item sword("Rusty Sword", 0, 5);
-            sword.applyItem(player);
-        }
-    }
-
-    void scenario4() {
-        TrailEvent event("A bandit blocks your path.");
-        event.displayEvent();
-
-        cout << "1. Fight\n2. Run" << endl;
-        int choice = getChoice();
-
-        if (choice == 1 && player.getAttackPower() < 15) {
-            player.loseHealth(30);
-        } else if (choice == 2) {
-            player.loseHealth(10);
-        }
-    }
-
-    void scenario5() {
-        TrailEvent event("You find food supplies.");
-        event.displayEvent();
-
-        cout << "1. Eat food\n2. Save it" << endl;
-        int choice = getChoice();
-
-        if (choice == 1) {
-            Item food("Food", 15, 0);
-            food.applyItem(player);
-        }
-    }
-
-    void scenario6() {
-        TrailEvent event("You reach a broken bridge.");
-        event.displayEvent();
-
-        cout << "1. Cross\n2. Go around" << endl;
-        int choice = getChoice();
-
-        if (choice == 1) {
-            player.loseHealth(20);
-        }
-    }
-
-    void scenario7() {
-        TrailEvent event("You meet a travelling merchant.");
-        event.displayEvent();
-
-        cout << "1. Trade\n2. Ignore" << endl;
-        int choice = getChoice();
-
-        if (choice == 1) {
-            Item potion("Health Potion", 25, 0);
-            potion.applyItem(player);
-        }
-    }
-
-    void scenario8() {
-        TrailEvent event("Final challenge: Desert Guardian!");
-        event.displayEvent();
-
-        cout << "1. Fight\n2. Flee" << endl;
-        int choice = getChoice();
-
-        if (choice == 1 && player.getAttackPower() < 20) {
-            player.loseHealth(40);
-        }
-    }
-};
 
 // MainMenu
 void mainMenu() {
@@ -394,7 +375,12 @@ void mainMenu() {
 
 // Main
 int main() {
+
+    srand(time(0));
+
     Game game;
-    game.startGame();
+
+    game.mainMenu();
+
     return 0;
 }
