@@ -6,6 +6,30 @@
 
 using namespace std;
 
+// Inventory
+class Inventory {
+public:
+    int food;
+    int ammo;
+    int clothes;
+    int parts;
+
+    Inventory() {
+        food = 200;
+        ammo = 50;
+        clothes = 10;
+        parts = 3;
+    }
+
+    void show() {
+        cout << "\n--- Inventory ---\n";
+        cout << "Food: " << food << endl;
+        cout << "Ammo: " << ammo << endl;
+        cout << "Clothes: " << clothes << endl;
+        cout << "Spare Parts: " << parts << endl;
+    }
+};
+
 // Player
 class Player {
 public:
@@ -59,26 +83,70 @@ public:
     }
 };
 
-// item
-class Item {
-private:
-    string name;
-    int healthBonus;
-    int attackBonus;
-
+class EventSystem {
 public:
-    Item(string tempName, int tempHealthBonus, int tempAttackBonus) {
-        name = tempName;
-        healthBonus = tempHealthBonus;
-        attackBonus = tempAttackBonus;
-    }
 
-    void applyItem(Player& player) {
-        player.gainHealth(healthBonus);
-        player.increaseAttack(attackBonus);
-        cout << "You used " << name << "!" << endl;
+    static void randomEvent(Player &player, Inventory &inv) {
+
+        int event = rand() % 4;
+
+        if (event == 0) {
+            cout << "\nA sandstorm hits your caravan!\n";
+            player.health -= 10;
+            cout << "You lost health.\n";
+        }
+
+        else if (event == 1) {
+            cout << "\nYou found abandoned supplies!\n";
+            inv.food += 40;
+        }
+
+        else if (event == 2) {
+            cout << "\nBandits attacked!\n";
+            if (inv.ammo > 0) {
+                cout << "You fought them off.\n";
+                inv.ammo -= 10;
+            } else {
+                cout << "You had no ammo. You lost supplies.\n";
+                inv.food -= 20;
+            }
+        }
+
+        else if (event == 3) {
+            cout << "\nOne of your wagon wheels broke.\n";
+            if (inv.parts > 0) {
+                inv.parts--;
+                cout << "You repaired it.\n";
+            } else {
+                cout << "You cannot repair it easily.\n";
+                player.health -= 5;
+            }
+        }
     }
 };
+
+// Will come back Item Class later!
+
+// item
+// class Item {
+// private:
+//     string name;
+//     int healthBonus;
+//     int attackBonus;
+//
+// public:
+//     Item(string tempName, int tempHealthBonus, int tempAttackBonus) {
+//         name = tempName;
+//         healthBonus = tempHealthBonus;
+//         attackBonus = tempAttackBonus;
+//     }
+//
+//     void applyItem(Player& player) {
+//         player.gainHealth(healthBonus);
+//         player.increaseAttack(attackBonus);
+//         cout << "You used " << name << "!" << endl;
+//     }
+// };
 
 // TrailEvent
 class TrailEvent {
