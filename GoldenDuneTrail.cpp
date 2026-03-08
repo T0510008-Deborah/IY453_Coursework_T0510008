@@ -148,20 +148,63 @@ public:
 //     }
 // };
 
-// TrailEvent
-class TrailEvent {
-private:
-    string description;
-
+class RiverCrossing {
 public:
-    TrailEvent(string tempDescription) {
-        description = tempDescription;
-    }
 
-    void displayEvent() {
-        cout << description << endl;
+    static void cross(Player &player, Inventory &inv) {
+
+        int choice;
+
+        cout << "\nYou reached a river crossing.\n";
+
+        cout << "1. Ford the river\n";
+        cout << "2. Caulk the wagon\n";
+        cout << "3. Pay ferry (50 gold)\n";
+
+        cout << "\nEnter choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "You attempt to ford the river...\n";
+
+            if (rand() % 2 == 0) {
+                cout << "Success!\n";
+            } else {
+                cout << "You lost some food in the water.\n";
+                inv.food -= 30;
+            }
+        }
+
+        else if (choice == 2) {
+            cout << "You seal the wagon and float across.\n";
+            inv.parts--;
+        }
+
+        else if (choice == 3) {
+            if (player.gold >= 50) {
+                player.gold -= 50;
+                cout << "The ferry safely carries you across.\n";
+            } else {
+                cout << "Not enough gold.\n";
+            }
+        }
     }
 };
+// Will come back to TrailEvent Later !
+// // TrailEvent
+// class TrailEvent {
+// private:
+//     string description;
+//
+// public:
+//     TrailEvent(string tempDescription) {
+//         description = tempDescription;
+//     }
+//
+//     void displayEvent() {
+//         cout << description << endl;
+//     }
+// };
 
 // Game
 class Game {
