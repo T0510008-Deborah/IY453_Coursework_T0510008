@@ -1,64 +1,61 @@
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <cstdlib>
+#include <ctime>
+
 using namespace std;
 
 // Player
 class Player {
-private:
-    string name;
-    int health;
-    int lives;
-    int attackPower;
-
 public:
+    string name;
+    string role;
+    int health;
+    int gold;
+    int distance;
+
     Player() {
-        name = "default";
         health = 100;
-        lives = 3;
-        attackPower = 10;
+        distance = 500;
+        gold = 0;
     }
 
-    Player(string tempName) {
-        name = tempName;
-        health = 100;
-        lives = 3;
-        attackPower = 10;
-    }
+    void chooseRole() {
+        int choice;
 
-    string getName() {
-        return name;
-    }
+        cout << "\nChoose your role:\n";
+        cout << "1. Banker (More gold)\n";
+        cout << "2. Doctor (Better health)\n";
+        cout << "3. Carpenter (Better repairs)\n";
 
-    int getHealth() {
-        return health;
-    }
+        cout << "\nEnter choice: ";
+        cin >> choice;
 
-    int getLives() {
-        return lives;
-    }
-
-    int getAttackPower() {
-        return attackPower;
-    }
-
-    void loseHealth(int amount) {
-        health = health - amount;
-        if (health <= 0) {
-            lives--;
-            health = 100;
-            cout << "You lost a life! Lives left: " << lives << endl;
+        if (choice == 1) {
+            role = "Banker";
+            gold = 1600;
         }
-    }
-
-    void gainHealth(int amount) {
-        health = health + amount;
-        if (health > 100) {
-            health = 100;
+        else if (choice == 2) {
+            role = "Doctor";
+            gold = 800;
+            health = 120;
         }
+        else {
+            role = "Carpenter";
+            gold = 600;
+        }
+
+        cout << "\nYou chose: " << role << endl;
     }
 
-    void increaseAttack(int amount) {
-        attackPower = attackPower + amount;
+    void showStatus() {
+        cout << "\n--- Player Status ---\n";
+        cout << "Name: " << name << endl;
+        cout << "Role: " << role << endl;
+        cout << "Health: " << health << endl;
+        cout << "Gold: " << gold << endl;
+        cout << "Distance remaining: " << distance << " miles\n";
     }
 };
 
