@@ -137,49 +137,6 @@ public:
     string nextDecline;
 };
 
-//EventSystem
-class EventSystem {
-public:
-
-    static void randomEvent(Player &player, Inventory &inv) {
-
-        int event = rand() % 4;
-
-        if (event == 0) {
-            cout << "\nA sandstorm hits your caravan!\n";
-            player.health -= 10;
-            cout << "You lost health.\n";
-        }
-
-        else if (event == 1) {
-            cout << "\nYou found abandoned supplies!\n";
-            inv.food += 40;
-        }
-
-        else if (event == 2) {
-            cout << "\nBandits attacked!\n";
-            if (inv.ammo > 0) {
-                cout << "You fought them off.\n";
-                inv.ammo -= 10;
-            } else {
-                cout << "You had no ammo. You lost supplies.\n";
-                inv.food -= 20;
-            }
-        }
-
-        else if (event == 3) {
-            cout << "\nOne of your wagon wheels broke.\n";
-            if (inv.parts > 0) {
-                inv.parts--;
-                cout << "You repaired it.\n";
-            } else {
-                cout << "You cannot repair it easily.\n";
-                player.health -= 5;
-            }
-        }
-    }
-};
-
 // Updated Item
 class Item {
 public:
@@ -200,49 +157,6 @@ public:
     }
 };
 
-//RiverCrossing
-class RiverCrossing {
-public:
-
-    static void cross(Player &player, Inventory &inv) {
-
-        int choice;
-
-        cout << "\nYou reached a river crossing.\n";
-
-        cout << "1. Ford the river\n";
-        cout << "2. Caulk the wagon\n";
-        cout << "3. Pay ferry (50 gold)\n";
-
-        cout << "\nEnter choice: ";
-        cin >> choice;
-
-        if (choice == 1) {
-            cout << "You attempt to ford the river...\n";
-
-            if (rand() % 2 == 0) {
-                cout << "Success!\n";
-            } else {
-                cout << "You lost some food in the water.\n";
-                inv.food -= 30;
-            }
-        }
-
-        else if (choice == 2) {
-            cout << "You seal the wagon and float across.\n";
-            inv.parts--;
-        }
-
-        else if (choice == 3) {
-            if (player.gold >= 50) {
-                player.gold -= 50;
-                cout << "The ferry safely carries you across.\n";
-            } else {
-                cout << "Not enough gold.\n";
-            }
-        }
-    }
-};
 // Will come back to TrailEvent Later !
 // // TrailEvent
 // class TrailEvent {
@@ -260,171 +174,67 @@ public:
 // };
 
 // Game
-class Game {
+class Game{
+
 private:
+
+    map<string,Scene> scenes;
+    vector<Choice> choices;
+    map<string,Combat> combats;
+    map<string,Puzzle> puzzles;
+    map<string,Trade> trades;
+
     Player player;
-    Inventory inventory;
-    bool running;
+
+    string current_scene;
+    string last_scene_shown;
 
 public:
 
-    Game() {
-        running = true;
-    }
 
-    void showHowToPlay() {
-
-        ifstream file("howtoplay.txt");
-
-        if (!file) {
-            cout << "Help file not found.\n";
-            return;
-        }
-
-        string line;
-
-        cout << endl;
-
-        while (getline(file, line)) {
-            cout << line << endl;
-        }
-
-        file.close();
-    }
-
-    void startJourney() {
-
-        cout << "\nEnter your name: ";
-        cin >> player.name;
-
-        player.chooseRole();
-
-        cout << "\nYour journey across the Golden Dunes begins...\n";
-
-        journeyLoop();
-    }
-
-    void journeyLoop() {
-
-        while (player.distance > 0 && player.health > 0) {
-
-            int choice;
-
-            cout << "\n==============================\n";
-            cout << "Distance remaining: " << player.distance << " miles\n";
-            cout << "==============================\n";
-
-            cout << "\nJourney Menu\n";
-            cout << "1. Travel Forward\n";
-            cout << "2. Hunt for Food\n";
-            cout << "3. Rest\n";
-            cout << "4. Check Status\n";
-            cout << "5. Check Inventory\n";
-            cout << "6. Continue Journey\n";
-
-            cout << "\nEnter choice: ";
-            cin >> choice;
-
-            if (choice == 1) {
-
-                cout << "\nYou travel across the dunes...\n";
-
-                player.distance -= 40;
-                inventory.food -= 10;
-
-                EventSystem::randomEvent(player, inventory);
-
-                if (rand() % 5 == 0)
-                    RiverCrossing::cross(player, inventory);
-            }
-
-            else if (choice == 2) {
-
-                if (inventory.ammo > 0) {
-                    cout << "\nYou go hunting.\n";
-
-                    inventory.food += 30;
-                    inventory.ammo -= 5;
-                } else {
-                    cout << "You have no ammo.\n";
-                }
-            }
-
-            else if (choice == 3) {
-
-                cout << "\nYou rest at camp.\n";
-                player.health += 10;
-                inventory.food -= 5;
-            }
-
-            else if (choice == 4) {
-                player.showStatus();
-            }
-
-            else if (choice == 5) {
-                inventory.show();
-            }
-
-            else if (choice == 6) {
-                cout << "The caravan moves onward...\n";
-                player.distance -= 30;
-            }
-
-            if (inventory.food <= 0) {
-                cout << "\nYou ran out of food!\n";
-                player.health -= 10;
-            }
-
-            if (player.health <= 0)
-                break;
-        }
-
-        if (player.health <= 0) {
-            cout << "\nYour caravan did not survive the desert...\n";
-        } else {
-            cout << "\nYou reached the Golden City beyond the dunes!\n";
-        }
-
-        cout << "\nJourney ended.\n";
-    }
-
-
-// MainMenu
-void mainMenu() {
-
-    while (running) {
+    //Menu
+    void menu(){
 
         int choice;
 
-        cout << "\n=================================\n";
-        cout << "        GOLDEN DUNES TRAIL\n";
-        cout << "=================================\n";
+        while(true){
 
-        cout << "1. Start New Journey\n";
-        cout << "2. How To Play\n";
-        cout << "3. Credits\n";
-        cout << "4. Exit\n";
+            cout << "\n===== DESERT QUEST =====\n";
+            cout << "1 Start Game\n";
+            cout << "2 Load Game\n";
+            cout << "3 Instructions\n";
+            cout << "4 Exit\n";
+            cout << "Choice: ";
 
-        cout << "\nEnter choice: ";
-        cin >> choice;
+            cin >> choice;
 
-        if (choice == 1)
-            startJourney();
+            if(cin.fail()){
+                cin.clear();
+                cin.ignore(1000,'\n');
+                continue;
+            }
 
-        else if (choice == 2)
-            showHowToPlay();
+            if(choice==1) return;
 
-        else if (choice == 3)
-            credits();
+            if(choice==2){
 
-        else if (choice == 4)
-            running = false;
+                if(loadGame()){
+                    return;
+                }
+            }
 
-        else
-            cout << "Invalid choice.\n";
+            if(choice==3){
+
+                cout << "\nExplore the desert, solve puzzles and defeat enemies.\n";
+                cout << "Collect items to increase your power.\n";
+            }
+
+            if(choice==4){
+                exit(0);
+            }
+        }
     }
-}
-};
+
 
 // Main
 int main() {
