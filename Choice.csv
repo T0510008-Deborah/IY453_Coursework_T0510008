@@ -1,0 +1,61 @@
+choiceID,parentSceneID,choiceText,resultType,resultID,nextSceneID
+C1,S1,Lead the caravan straight into the dunes,SCENE,,S2
+C2,S1,Take a sheltered side path between low rocks,SCENE,,S3
+C3,S2,Seek shelter from the storm near the rocks,SCENE,,S3
+C4,S2,Press on through the rising wind toward the open sands,SCENE,,S8
+C5,S3,Explore the rocks more closely,SCENE,,S7
+C6,S3,Wait out the storm in silence,SCENE,,S4
+C7,S4,Approach the ridge of campfires,SCENE,,S5
+C8,S4,Avoid the lights and circle wide,SCENE,,S6
+C9,S5,Trade with the nomads for guidance,TRADE,T1,S13
+C10,S5,Share stories and move on without trading,SCENE,,S8
+C11,S6,Scout ahead alone among the rocks,COMBAT,E1,S3
+C12,S6,Return to the safer main route,SCENE,,S2
+C13,S7,Stand and fight the bandits,COMBAT,E1,S8
+C14,S7,Attempt to flee back toward the caravan,SCENE,,S3
+C15,S8,Study the markings on the milestone,PUZZLE,P1,S9
+C16,S8,Ignore the stone and keep moving,SCENE,,S9
+C17,S9,Investigate the depths of the well,SCENE,,S10
+C18,S9,Leave the well behind you,SCENE,,S13
+C19,S10,Pull the lantern lower into the black water,SCENE,,S11
+C20,S10,Toss a stone and step back warily,SCENE,,S9
+C21,S11,Stand your ground and fight the rising creature,COMBAT,E2,S13
+C22,S11,Retreat from the well before it fully emerges,SCENE,,S13
+C23,S12,Collect the glittering object from the stones,SCENE,,S13
+C24,S12,Leave the strange treasure where it lies,SCENE,,S16
+C25,S13,Browse the crumbling stalls for supplies,SCENE,,S14
+C26,S13,Follow the road signs deeper into the ruins,SCENE,,S16
+C27,S14,Offer rare goods to the merchant,TRADE,T2,S15
+C28,S14,Decline his hungry gaze and move on,SCENE,,S15
+C29,S15,Follow the faint tracks across the ridge,SCENE,,S19
+C30,S15,Ignore the tracks and stay with the old road,SCENE,,S16
+C31,S16,Explore the nearest ruined watchtower,SCENE,,S17
+C32,S16,Stay on the buried road between the towers,SCENE,,S19
+C33,S17,Climb the broken stairs to the top,SCENE,,S18
+C34,S17,Search the ground floor and old barracks,SCENE,,S20
+C35,S18,Speak the answer to the riddle door,PUZZLE,P2,S21
+C36,S18,Leave the riddle unsolved and descend,SCENE,,S19
+C37,S19,Draw your weapon and fight through the ambush,COMBAT,E3,S20
+C38,S19,Throw down your pack and try to bargain,SCENE,,S22
+C39,S20,Keep the loot and press onward,SCENE,,S21
+C40,S20,Leave an offering on a ruined altar,SCENE,,S23
+C41,S21,Follow the cool breeze deeper underground,SCENE,,S23
+C42,S21,Rest beside a fallen pillar for a time,SCENE,,S28
+C43,S22,Force your way forward through the trapped hall,SCENE,,S24
+C44,S22,Retreat carefully back toward the road,SCENE,,S16
+C45,S23,Offer valuables to the golden jackal statue,TRADE,T3,S22
+C46,S23,Examine the base of the statue for mechanisms,PUZZLE,P3,S24
+C47,S24,Leap forward as the floor sinks away,SCENE,,S25
+C48,S24,Jump back toward the trapped passage,SCENE,,S22
+C49,S25,Explore the bustling oasis around you,SCENE,,S26
+C50,S25,Leave the oasis quietly with your caravan,SCENE,,S32
+C51,S27,Show the prospector your strangest treasure,TRADE,T4,S28
+C52,S27,Ignore the old prospector and rest instead,SCENE,,S28
+C53,S28,Set out along the hidden path behind the palms,SCENE,,S29
+C54,S28,Decide that your journey has earned its rest,SCENE,,S32
+C55,S29,Follow the path toward the rumbling sands,SCENE,,S30
+C56,S29,Turn back to the safety of the oasis,SCENE,,S26
+C57,S30,Stand your ground against whatever comes,COMBAT,E4,S31
+C58,S30,Run toward distant torchlight on the horizon,SCENE,,S31
+C59,S26,Visit a whispering mystic offering answers,PUZZLE,P4,S29
+C60,S26,Seek a caravan master to leave the dunes,SCENE,,S32

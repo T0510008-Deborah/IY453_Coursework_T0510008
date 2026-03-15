@@ -1,0 +1,5 @@
+tradeID,itemRequired,goldReward,itemGiven,nextSceneAccept,nextSceneDecline
+T1,Claw,60,Map,S27,S13
+T2,Ruby,80,GoldIdol,S27,S15
+T3,GoldIdol,0,PassToken,S25,S22
+T4,Relic,0,Legend,S31,S28
