@@ -108,6 +108,35 @@ public:
     }
 };
 
+// Combat
+class Combat{
+
+public:
+    string enemyName;
+    float enemyHP;
+    float enemyAttack;
+    string nextWin;
+    string nextLose;
+};
+
+class Puzzle{
+
+public:
+    string question;
+    string answer;
+    string nextCorrect;
+    string nextWrong;
+};
+
+//Trade
+class Trade{
+
+public:
+    float goldReward;
+    string nextAccept;
+    string nextDecline;
+};
+
 //EventSystem
 class EventSystem {
 public:
@@ -151,28 +180,25 @@ public:
     }
 };
 
-// Will come back Item Class later!
+// Updated Item
+class Item {
+public:
+    string name;
+    string type;
+    float attack;
+    float defense;
+    float health;
 
-// item
-// class Item {
-// private:
-//     string name;
-//     int healthBonus;
-//     int attackBonus;
-//
-// public:
-//     Item(string tempName, int tempHealthBonus, int tempAttackBonus) {
-//         name = tempName;
-//         healthBonus = tempHealthBonus;
-//         attackBonus = tempAttackBonus;
-//     }
-//
-//     void applyItem(Player& player) {
-//         player.gainHealth(healthBonus);
-//         player.increaseAttack(attackBonus);
-//         cout << "You used " << name << "!" << endl;
-//     }
-// };
+    Item(){}
+
+    Item(string n,string t,float a,float d,float h){
+        name=n;
+        type=t;
+        attack=a;
+        defense=d;
+        health=h;
+    }
+};
 
 //RiverCrossing
 class RiverCrossing {
