@@ -32,57 +32,83 @@ public:
 
 // Player
 class Player {
-public:
+private:
     string name;
-    string role;
-    int health;
-    int gold;
-    int distance;
+    float health;
+    float gold;
 
+public:
     Player() {
+        name = "Player";
         health = 100;
-        distance = 500;
-        gold = 0;
+        gold = 50;
     }
 
-    void chooseRole() {
-        int choice;
+    void setName(string n) {
+        name = n;
+    }
 
-        cout << "\nChoose your role:\n";
-        cout << "1. Banker (More gold)\n";
-        cout << "2. Doctor (Better health)\n";
-        cout << "3. Carpenter (Better repairs)\n";
+    string getName() {
+        return name;
+    }
 
-        cout << "\nEnter choice: ";
-        cin >> choice;
+    float getHealth() {
+        return health;
+    }
 
-        if (choice == 1) {
-            role = "Banker";
-            gold = 1600;
-        }
-        else if (choice == 2) {
-            role = "Doctor";
-            gold = 800;
-            health = 120;
-        }
-        else {
-            role = "Carpenter";
-            gold = 600;
-        }
+    float getGold() {
+        return gold;
+    }
 
-        cout << "\nYou chose: " << role << endl;
+    void addGold(float g) {
+        gold += g;
+    }
+
+    void damage(float d) {
+        health -= d;
+        if (health < 0) health = 0;
     }
 
     void showStatus() {
-        cout << "\n--- Player Status ---\n";
+        cout << "\n--- PLAYER STATUS ---\n";
         cout << "Name: " << name << endl;
-        cout << "Role: " << role << endl;
         cout << "Health: " << health << endl;
         cout << "Gold: " << gold << endl;
-        cout << "Distance remaining: " << distance << " miles\n";
+    }
+};
+// Scene
+class Scene {
+public:
+    string id;
+    string description;
+
+    Scene() {}
+
+    Scene(string i, string d) {
+        id = i;
+        description = d;
     }
 };
 
+// Choice
+class Choice {
+public:
+    string parentScene;
+    string text;
+    string resultType;
+    string resultID;
+    string nextScene;
+
+    Choice(string p, string t, string r, string id, string n) {
+        parentScene = p;
+        text = t;
+        resultType = r;
+        resultID = id;
+        nextScene = n;
+    }
+};
+
+//EventSystem
 class EventSystem {
 public:
 
@@ -148,6 +174,7 @@ public:
 //     }
 // };
 
+//RiverCrossing
 class RiverCrossing {
 public:
 
