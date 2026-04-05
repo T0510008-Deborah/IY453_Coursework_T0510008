@@ -1,5 +1,5 @@
 puzzleID,question,answer,nextSceneCorrect,nextSceneWrong
-P1,The milestone shows a sun over three dunes Which direction do you follow east or west,east,S9,S6
+P1,The milestone shows a rising sun over dunes Which direction do you follow,east,S9,S6
 P2,What walks on four legs in the morning two at noon and three in the evening,human,S21,S22
-P3,The jackal statue can face left or right Which way should it look to open the path,left,S25,S24
+P3,The jackal must face the rising sun Which direction do you turn it,left,S25,S24
 P4,Solve 7 plus 8 times 2,23,S29,S28

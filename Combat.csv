@@ -1,5 +1,5 @@
 combatID,enemyName,enemyHP,enemyAttack,rewardItem,nextSceneWin,nextSceneLose
 E1,Bandit Raider,25,5,GoldPouch,S8,S3
-E2,Well Beast,35,7,Claw,S12,S13
+E2,Well Guardian,35,7,Relic,S12,S13
 E3,Bandit Captain,40,8,Ruby,S20,S22
-E4,Sand Wyrm,60,10,Relic,S31,S32
+E4,Sand Wyrm,60,10,AncientRelic,S31,S32

@@ -253,28 +253,68 @@ void menu(){
 
 /* ================= CSV LOADERS ================= */
 
-void loadScenes(string file){
-
+    void loadScenes(string file)
+{
     ifstream f(file);
     string line;
 
-    getline(f,line);
+    getline(f, line); // skip header
 
-    while(getline(f,line)){
+    while(getline(f, line))
+    {
+        if(line.empty()) continue;
 
-        string id,desc;
+        string id, desc;
 
-        stringstream ss(line);
+        size_t commaPos = line.find(',');
 
-        getline(ss,id,',');
-        getline(ss,desc);
+        id = line.substr(0, commaPos);
+        desc = line.substr(commaPos + 1);
 
-        scenes[id] = Scene(id,desc);
+        // 🔥 HANDLE MULTI-LINE QUOTED TEXT
+        if(!desc.empty() && desc.front() == '"')
+        {
+            desc.erase(0, 1); // remove opening quote
 
-        if(current_scene=="")
-            current_scene=id;
+            while(desc.back() != '"')
+            {
+                string nextLine;
+                getline(f, nextLine);
+                desc += "\n" + nextLine;
+            }
+
+            desc.pop_back(); // remove closing quote
+        }
+
+        scenes[id] = Scene(id, desc);
+
+        if(current_scene == "")
+            current_scene = id;
     }
 }
+
+// void loadScenes(string file){
+//
+//     ifstream f(file);
+//     string line;
+//
+//     getline(f,line);
+//
+//     while(getline(f,line)){
+//
+//         string id,desc;
+//
+//         stringstream ss(line);
+//
+//         getline(ss,id,',');
+//         getline(ss,desc);
+//
+//         scenes[id] = Scene(id,desc);
+//
+//         if(current_scene=="")
+//             current_scene=id;
+//     }
+// }
 
 void loadChoices(string file){
 
