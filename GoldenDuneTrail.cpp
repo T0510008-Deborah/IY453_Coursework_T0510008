@@ -543,347 +543,358 @@ static void loadCombat(const string &file, map<string, Combat> &combats)
     }
 };
 
-/* ================= GAME FUNCTIONS ================= */
+// Game Class
+class Game {
+private:
+    map<string, Scene>  scenes;
+    vector<Choice> choices;
+    map<string, Combat> combats;
+    map<string, Puzzle> puzzles;
+    map<string, Trade> trades;
+    string current_scene;
 
-vector<Choice> getChoices(string sceneID){
+    void applySceneDrain(Player &p)
+    {
+        int foodDrain = max(1, 3 - p.getTravelSpeed() + 1);
 
-    vector<Choice> result;
+        bool hotScene   = (current_scene=="S2" || current_scene=="S8"  ||
+                           current_scene=="S15" || current_scene=="S29" ||
+                           current_scene=="S30");
+        bool stormScene = (current_scene=="S3" || current_scene=="S4");
 
-    for(Choice c:choices){
+        if(hotScene)
+        {
+            int loss = max(0, 8 - p.getHeatResist() / 5);
+            if(loss > 0)
+            {
+                p.subtractHP(loss);
+                cout << "  [Heat]   The blazing desert scorches your caravan. -"
+                     << loss << " HP\n";
+            }
+        }
 
-        if(c.parentScene==sceneID)
-            result.push_back(c);
+        if(stormScene)
+        {
+            int loss = max(0, 6 - p.getStormResist() / 5);
+            if(loss > 0)
+            {
+                p.subtractHP(loss);
+                cout << "  [Storm]  The sandstorm batters your caravan. -"
+                     << loss << " HP\n";
+            }
+        }
+
+        p.subtractFood(foodDrain);
+
+        if(p.getFoodSupply() == 0)
+        {
+            p.subtractHP(5);
+            cout << "  [Hunger] Your supplies are exhausted. The caravan weakens. -5 HP\n";
+        }
     }
 
-    if(result.size() > 2){
-        result.erase(result.begin() + 2, result.end());
+
+    void showJourneyStatus(const Player &p)
+    {
+        string nameTag = "[ " + p.getName() + " ]";
+        string header  = " Caravan Status " + nameTag;
+        while((int)header.size() < 42) header += " ";
+
+        cout << "\n+" << string(42, '-') << "+\n";
+        cout << "| " << header << "|\n";
+        cout << "+" << string(42, '-') << "+\n";
+
+        auto row = [](string label, string value) {
+            string line = "| " + label + " : " + value;
+            while((int)line.size() < 43) line += " ";
+            cout << line << "|\n";
+        };
+
+        row("HP       ", to_string(p.getHP()) + " / 100");
+        row("Food     ", to_string(p.getFoodSupply()) + " days remaining");
+        row("Gold     ", "$" + to_string(p.getGold()));
+        row("Attack   ", to_string(p.getAttack()));
+        row("Heat Res ", to_string(p.getHeatResist()) + "%");
+        row("Storm Res", to_string(p.getStormResist()) + "%");
+
+        cout << "+" << string(42, '-') << "+\n";
     }
 
-    return result;
-}
 
-void showScene(){
-
-    if(current_scene != last_scene_shown){
-
-        cout << "\nThe desert wind howls across the dunes.\n";
-        cout << player.getName() << ", your journey continues...\n";
-
-        last_scene_shown=current_scene;
+    void showScene()
+    {
+        cout << "\n------------------------------------------------------------------\n";
+        cout << scenes[current_scene].getDescription() << "\n";
+        cout << "------------------------------------------------------------------\n";
     }
 
-    cout << "\n" << scenes[current_scene].description << endl;
-}
+    vector<Choice> getChoices()
+    {
+        vector<Choice> result;
+        for(auto &c : choices)
+            if(c.getParentScene() == current_scene)
+                result.push_back(c);
+        if((int)result.size() > 2)
+            result.erase(result.begin() + 2, result.end());
+        return result;
+    }
 
-/* ================= COMBAT ================= */
+    /* ── Combat ── */
+    bool fightEnemy(Combat &enemy, Player &p)
+    {
+        float eHP  = enemy.getEnemyHP();
+        float pHP  = (float)p.getHP();
+        float pAtk = (float)p.getAttack();
+        float eAtk = enemy.getEnemyAttack();
 
-bool fightEnemy(Combat enemy){
+        cout << "\n==================== COMBAT ====================\n";
+        cout << "  Enemy    : " << enemy.getEnemyName()  << "\n";
+        cout << "  Enemy HP : " << (int)eHP << "\n";
+        cout << "  Your HP  : " << (int)pHP << "\n";
+        cout << "  Your ATK : " << (int)pAtk << "\n";
+        cout << "================================================\n";
 
-    cout << "\nEnemy appears: " << enemy.enemyName << endl;
+        int round = 1;
+        while(eHP > 0 && pHP > 0)
+        {
+            cout << "\n  -- Round " << round++ << " --\n";
+            eHP -= pAtk;
+            cout << "  You strike " << enemy.getEnemyName()
+                 << " for " << (int)pAtk << " damage.  "
+                 << "Enemy HP: " << max(0, (int)eHP) << "\n";
+            if(eHP <= 0) break;
+            pHP -= eAtk;
+            cout << "  " << enemy.getEnemyName() << " hits you for "
+                 << (int)eAtk << ".  Your HP: " << max(0, (int)pHP) << "\n";
+        }
 
-    enemy.enemyHP -= player.getAttack();
+        if(pHP <= 0)
+        {
+            p.setHP(1);
+            cout << "\n  You are badly wounded but manage to survive...\n";
+            cout << "================================================\n";
+            return false;
+        }
 
-    if(enemy.enemyHP <= 0){
-
-        cout << "Enemy defeated!\n";
-
-        player.addScore(50);
-
+        p.setHP((int)pHP);
+        int reward = (int)(eAtk * 3);
+        p.addGold(reward);
+        cout << "\n  " << enemy.getEnemyName() << " is defeated!\n";
+        cout << "  You find " << reward << " gold among their belongings.\n";
+        cout << "================================================\n";
         return true;
     }
 
-    player.damage(enemy.enemyAttack);
-
-    if(player.getHealth() <= 0){
-
-        cout << "You were defeated.\n";
-
-        return false;
-    }
-
-    return true;
-}
-
-/* ================= CHOICE RESOLUTION ================= */
-
-string resolveChoice(Choice c){
-
-    if(c.resultType=="COMBAT"){
-
-        Combat enemy = combats[c.resultID];
-
-        if(fightEnemy(enemy))
-            return enemy.nextWin;
-        else
-            gameOver();
-    }
-
-    if(c.resultType=="PUZZLE"){
-
-        Puzzle p = puzzles[c.resultID];
-
-        cout << "\n" << p.question << endl;
-        cout << "Your answer: ";
+    string solvePuzzle(Puzzle &puzzle)
+    {
+        cout << "\n================== PUZZLE ==================\n";
+        cout << "  " << puzzle.getQuestion() << "\n";
+        cout << "============================================\n";
+        cout << "  Your answer: ";
 
         string ans;
         cin.ignore();
         getline(cin, ans);
 
-        // convert to lowercase
-        transform(ans.begin(), ans.end(), ans.begin(), ::tolower);
+        while(!ans.empty() && ans.front() == ' ') ans.erase(ans.begin());
+        while(!ans.empty() && ans.back()  == ' ') ans.pop_back();
 
-        if(ans == p.answer){
+        string ansL = ans, corL = puzzle.getAnswer();
+        transform(ansL.begin(), ansL.end(), ansL.begin(), ::tolower);
+        transform(corL.begin(), corL.end(), corL.begin(), ::tolower);
 
-            cout << "Correct!\n";
-            player.addScore(30);
-            return p.nextCorrect;
+        if(ansL == corL)
+        {
+            cout << "\n  Correct! The ancient mechanism yields...\n";
+            cout << "============================================\n";
+            return puzzle.getNextCorrect();
         }
-        else{
-
-            cout << "Wrong!\n";
-            return p.nextWrong;
-        }
-    }
-
-    // if(c.resultType=="PUZZLE"){
-    //
-    //     Puzzle p = puzzles[c.resultID];
-    //
-    //     cout << p.question << endl;
-    //
-    //     string ans;
-    //     cin >> ans;
-    //
-    //     if(ans == p.answer){
-    //
-    //         cout << "Correct!\n";
-    //         player.addScore(30);
-    //         return p.nextCorrect;
-    //     }
-    //     else{
-    //
-    //         cout << "Wrong!\n";
-    //         return p.nextWrong;
-    //     }
-    // }
-
-    if(c.resultType=="TRADE"){
-
-        Trade t = trades[c.resultID];
-
-        char ch;
-
-        cout << "Accept trade? (y/n): ";
-        cin >> ch;
-
-        if(ch=='y'){
-
-            player.addScore(10);
-
-            Item reward("Desert Sword","weapon",5,0,0);
-            player.addItem(reward);
-
-            return t.nextAccept;
-        }
-
-        return t.nextDecline;
-    }
-
-    return c.nextScene;
-}
-
-/* ================= SAVE SYSTEM ================= */
-
-void saveGame(){
-
-    ofstream save("savegame.txt");
-
-    save << player.getName() << endl;
-    save << current_scene << endl;
-    save << player.getHealth() << endl;
-    save << player.getScore() << endl;
-
-    save << player.inventory.size() << endl;
-
-    for(Item i:player.inventory){
-
-        save << i.name << ","
-             << i.type << ","
-             << i.attack << ","
-             << i.defense << ","
-             << i.health << endl;
-    }
-
-    save.close();
-
-    cout << "Game Saved.\n";
-}
-
-/* ================= LOAD SYSTEM ================= */
-
-bool loadGame(){
-
-    ifstream save("savegame.txt");
-
-    if(!save){
-
-        cout << "No save file found.\n";
-        return false;
-    }
-
-    string name;
-
-    getline(save,name);
-    player.setName(name);
-
-    getline(save,current_scene);
-
-    float h;
-    save >> h;
-    player.setHealth(h);
-
-    int s;
-    save >> s;
-    player.setScore(s);
-
-    int count;
-    save >> count;
-
-    save.ignore();
-
-    for(int i=0;i<count;i++){
-
-        string line;
-
-        getline(save,line);
-
-        stringstream ss(line);
-
-        string n,t,a,d,h;
-
-        getline(ss,n,',');
-        getline(ss,t,',');
-        getline(ss,a,',');
-        getline(ss,d,',');
-        getline(ss,h,',');
-
-        try{
-
-            Item item(n,t,stof(a),stof(d),stof(h));
-            player.inventory.push_back(item);
-
-        }catch(...){
-
-            cout << "Invalid item in save file skipped\n";
+        else
+        {
+            cout << "\n  Wrong. The answer was: " << puzzle.getAnswer() << "\n";
+            cout << "============================================\n";
+            return puzzle.getNextWrong();
         }
     }
 
-    cout << "Game Loaded.\n";
-
-    return true;
-}
-
-/* ================= GAME OVER ================= */
-
-void gameOver(){
-
-    cout << "\n===== GAME OVER =====\n";
-
-    cout << "Score: " << player.getScore() << endl;
-
-    int c;
-
-    cout << "1 Restart\n";
-    cout << "2 Exit\n";
-
-    cin >> c;
-
-    if(c==1){
-
-        start();
-    }
-    else{
-        exit(0);
-    }
-}
-
-/* ================= MAIN GAME LOOP ================= */
-
-void start(){
-
-    if(player.getName()==""){
-
-        cout << "Enter your name: ";
-        string n;
-        cin >> n;
-
-        player.setName(n);
+    string doTrade(Trade &t, Player &p)
+    {
+        cout << "\n================== TRADE ===================\n";
+        if(!t.getItemRequired().empty())
+            cout << "  You offer your " << t.getItemRequired() << " to the other party.\n";
+        if(t.getGoldReward() > 0)
+        {
+            p.addGold((int)t.getGoldReward());
+            cout << "  You receive " << (int)t.getGoldReward() << " gold in return.\n";
+        }
+        if(!t.getItemGiven().empty() && t.getItemGiven() != "0")
+            cout << "  In exchange you receive: " << t.getItemGiven() << ".\n";
+        cout << "============================================\n";
+        return t.getNextAccept();
     }
 
-    while(true){
+    string resolveChoice(Choice &c, Player &p)
+    {
+        if(c.getResultType() == "COMBAT" && combats.count(c.getResultID()))
+        {
+            Combat &enemy = combats[c.getResultID()];
+            return fightEnemy(enemy, p) ? enemy.getNextWin() : enemy.getNextLose();
+        }
+        if(c.getResultType() == "PUZZLE" && puzzles.count(c.getResultID()))
+        {
+            Puzzle &puzzle = puzzles[c.getResultID()];
+            return solvePuzzle(puzzle);
+        }
+        if(c.getResultType() == "TRADE" && trades.count(c.getResultID()))
+        {
+            Trade &t = trades[c.getResultID()];
+            return doTrade(t, p);
+        }
+        return c.getNextScene();
+    }
 
-        showScene();
+    void saveGame(Player &p)
+    {
+        ofstream f("savegame.csv");
+        if(!f.is_open()) { cout << "  [Save failed]\n"; return; }
 
-        player.showStats();
+        f << "field,value\n";
+        f << "playerName,"   << p.getName()           << "\n";
+        f << "scene,"        << current_scene         << "\n";
+        f << "gold,"         << p.getGold()           << "\n";
+        f << "playerHP,"     << p.getHP()             << "\n";
+        f << "playerAttack," << p.getAttack()         << "\n";
+        f << "heatResist,"   << p.getHeatResist()     << "\n";
+        f << "stormResist,"  << p.getStormResist()    << "\n";
+        f << "travelSpeed,"  << p.getTravelSpeed()    << "\n";
+        f << "foodSupply,"   << p.getFoodSupply()     << "\n";
+        f << "currentWeight,"<< p.getCurrentWeight()  << "\n";
 
-        vector<Choice> options = getChoices(current_scene);
+        for(auto &item : p.getInventory())
+            f << "inventory," << item.getId() << "\n";
 
-        if(options.empty()){
+        f.close();
+        cout << "  [Game saved.]\n";
+    }
 
-            cout << "\n===== VICTORY =====\n";
-            cout << "Final Score: " << player.getScore() << endl;
+public:
 
-            player.showInventory();
+    void setStartScene(string s) { current_scene = s; }
 
-            break;
+    void loadScenes(string file)
+    {
+        CsvLoader::loadScenes(file, scenes, current_scene);
+    }
+    void loadChoices(string file)
+    {
+        CsvLoader::loadChoices(file, choices);
+    }
+    void loadCombat(string file)
+    {
+        CsvLoader::loadCombat(file, combats);
+    }
+    void loadPuzzle(string file)
+    {
+        CsvLoader::loadPuzzle(file, puzzles);
+    }
+    void loadTrade(string file)
+    {
+        CsvLoader::loadTrade(file, trades);
+    }
+
+    void start(Player &p, bool buildStatsFirst = true)
+    {
+        if(current_scene == "")
+        {
+            cout << "\n[No starting scene found.]\n";
+            return;
         }
 
-        cout << "\nChoices:\n";
+        if(buildStatsFirst)
+            p.buildStats();
 
-        for(int i=0;i<options.size();i++){
+        cout << "\n==================================================================\n";
+        cout << "                    THE JOURNEY BEGINS\n";
+        cout << "==================================================================\n";
+        showJourneyStatus(p);
 
-            cout << i+1 << ". " << options[i].text << endl;
-        }
-
-        cout << "3 Save Game\n";
-        cout << "4 Inventory\n";
-
-        int choice;
-
-        while(true){
-
-            cout << "Choice: ";
-            cin >> choice;
-
-            if(cin.fail()){
-
-                cin.clear();
-                cin.ignore(1000,'\n');
-                continue;
+        while(true)
+        {
+            if(scenes.find(current_scene) == scenes.end())
+            {
+                cout << "\n[Journey ends — unknown scene: " << current_scene << "]\n";
+                break;
             }
 
-            break;
+            applySceneDrain(p);
+            showScene();
+
+            if(p.getHP() <= 0)
+            {
+                cout << "\n====================================\n";
+                cout << "  *** YOUR CARAVAN HAS FALLEN ***\n";
+                cout << "  The desert has claimed you.\n";
+                cout << "====================================\n";
+                cout << "  Final Gold : $" << p.getGold() << "\n";
+                break;
+            }
+
+            if(current_scene == "S31" || current_scene == "S32")
+            {
+                cout << "\n====================================\n";
+                if(current_scene == "S31")
+                    cout << "  *** YOU HAVE REACHED AURION ***\n";
+                else
+                    cout << "  *** YOUR JOURNEY HAS ENDED ***\n";
+                cout << "====================================\n";
+                cout << "  Final Gold : $" << p.getGold()       << "\n";
+                cout << "  Final HP   : " << p.getHP()          << " / 100\n";
+                cout << "  Food left  : " << p.getFoodSupply()  << " days\n";
+                break;
+            }
+
+            vector<Choice> sceneChoices = getChoices();
+
+            if(sceneChoices.empty())
+            {
+                cout << "\n[No choices available journey ends here.]\n";
+                break;
+            }
+
+            cout << "\nWhat do you do?\n";
+            for(int i = 0; i < (int)sceneChoices.size(); i++)
+                cout << "  " << i + 1 << ". " << sceneChoices[i].getText() << "\n";
+            cout << "  S. Save game\n";
+
+            string input;
+            int pick = 0;
+            while(true)
+            {
+                cout << "------------\n";
+                cout << "Enter choice: ";
+                cin >> input;
+
+                if(input == "s" || input == "S")
+                {
+                    saveGame(p);
+                    continue;
+                }
+
+                try {
+                    pick = stoi(input);
+                    if(pick >= 1 && pick <= (int)sceneChoices.size()) break;
+                } catch(...) {}
+
+                cout << "Invalid. Try again.\n";
+            }
+
+            string nextScene = resolveChoice(sceneChoices[pick - 1], p);
+            showJourneyStatus(p);
+
+            if(!nextScene.empty())
+                current_scene = nextScene;
         }
-
-        if(choice==3){
-
-            saveGame();
-            continue;
-        }
-
-        if(choice==4){
-
-            player.showInventory();
-            continue;
-        }
-
-        if(choice<1 || choice>options.size())
-            continue;
-
-        current_scene = resolveChoice(options[choice-1]);
     }
-}
-
 };
 
 // Main
