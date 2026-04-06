@@ -328,7 +328,7 @@ public:
     }
 };
 
-// CsnLoader Class
+// CSV Loader Class
 class CsvLoader {
 public:
     static void loadScenes(const string &file, map<string, Scene> &scenes, string &firstScene)
@@ -382,247 +382,166 @@ public:
         }
     }
 
-void menu(){
-
-    int choice;
-
-    while(true){
-
-        cout << "\n===== DESERT QUEST =====\n";
-        cout << "1 Start Game\n";
-        cout << "2 Load Game\n";
-        cout << "3 Instructions\n";
-        cout << "4 Exit\n";
-        cout << "Choice: ";
-
-        cin >> choice;
-
-        if(cin.fail()){
-            cin.clear();
-            cin.ignore(1000,'\n');
-            continue;
-        }
-
-        if(choice==1) return;
-
-        if(choice==2){
-
-            if(loadGame()){
-                return;
-            }
-        }
-
-        if(choice==3){
-
-            cout << "\nExplore the desert, solve puzzles and defeat enemies.\n";
-            cout << "Collect items to increase your power.\n";
-        }
-
-        if(choice==4){
-            exit(0);
-        }
-    }
-}
-
-/* ================= CSV LOADERS ================= */
-
-    void loadScenes(string file)
-{
-    ifstream f(file);
-    string line;
-
-    getline(f, line); // skip header
-
-    while(getline(f, line))
+static void loadCombat(const string &file, map<string, Combat> &combats)
     {
-        if(line.empty()) continue;
+        ifstream f(file);
+        string line;
+        getline(f, line);
 
-        string id, desc;
-
-        size_t commaPos = line.find(',');
-
-        id = line.substr(0, commaPos);
-        desc = line.substr(commaPos + 1);
-
-        // 🔥 HANDLE MULTI-LINE QUOTED TEXT
-        if(!desc.empty() && desc.front() == '"')
+        while(getline(f, line))
         {
-            desc.erase(0, 1); // remove opening quote
-
-            while(desc.back() != '"')
-            {
-                string nextLine;
-                getline(f, nextLine);
-                desc += "\n" + nextLine;
+            if(line.empty()) continue;
+            string id, name, hp, atk, rew, win, lose;
+            stringstream ss(line);
+            getline(ss, id, ',');
+            getline(ss, name, ',');
+            getline(ss, hp, ',');
+            getline(ss, atk, ',');
+            getline(ss, rew, ',');
+            getline(ss, win, ',');
+            getline(ss, lose);
+            try {
+                Combat c(name, stof(hp), stof(atk), win, lose);
+                combats[id] = c;
             }
-
-            desc.pop_back(); // remove closing quote
-        }
-
-        scenes[id] = Scene(id, desc);
-
-        if(current_scene == "")
-            current_scene = id;
-    }
-}
-
-// void loadScenes(string file){
-//
-//     ifstream f(file);
-//     string line;
-//
-//     getline(f,line);
-//
-//     while(getline(f,line)){
-//
-//         string id,desc;
-//
-//         stringstream ss(line);
-//
-//         getline(ss,id,',');
-//         getline(ss,desc);
-//
-//         scenes[id] = Scene(id,desc);
-//
-//         if(current_scene=="")
-//             current_scene=id;
-//     }
-// }
-
-void loadChoices(string file){
-
-    ifstream f(file);
-    string line;
-
-    getline(f,line);
-
-    while(getline(f,line)){
-
-        string cid,parent,text,type,rid,next;
-
-        stringstream ss(line);
-
-        getline(ss,cid,',');
-        getline(ss,parent,',');
-        getline(ss,text,',');
-        getline(ss,type,',');
-        getline(ss,rid,',');
-        getline(ss,next);
-
-        choices.push_back(Choice(parent,text,type,rid,next));
-    }
-}
-
-    void loadCombat(string file){
-
-    ifstream f(file);
-    string line;
-
-    getline(f,line);
-
-    while(getline(f,line)){
-
-        if(line.empty()) continue;
-
-        string id,name,hp,atk,rew,win,lose;
-
-        stringstream ss(line);
-
-        getline(ss,id,',');
-        getline(ss,name,',');
-        getline(ss,hp,',');
-        getline(ss,atk,',');
-        getline(ss,rew,',');
-        getline(ss,win,',');
-        getline(ss,lose);
-
-        Combat c;
-
-        try{
-
-            c.enemyName = name;
-            c.enemyHP = stof(hp);
-            c.enemyAttack = stof(atk);
-            c.nextWin = win;
-            c.nextLose = lose;
-
-            combats[id] = c;
-
-        }catch(...){
-
-            cout << "Combat CSV error skipped: " << line << endl;
+            catch(...) { cout << "Combat CSV error: " << line << "\n"; }
         }
     }
-}
 
-void loadPuzzle(string file){
+    static void loadPuzzle(const string &file, map<string, Puzzle> &puzzles)
+    {
+        ifstream f(file);
+        string line;
+        getline(f, line);
 
-    ifstream f(file);
-    string line;
-
-    getline(f,line);
-
-    while(getline(f,line)){
-
-        string id,q,a,correct,wrong;
-
-        stringstream ss(line);
-
-        getline(ss,id,',');
-        getline(ss,q,',');
-        getline(ss,a,',');
-        getline(ss,correct,',');
-        getline(ss,wrong);
-
-        Puzzle p;
-
-        p.question=q;
-        p.answer=a;
-        p.nextCorrect=correct;
-        p.nextWrong=wrong;
-
-        puzzles[id]=p;
-    }
-}
-
-    void loadTrade(string file){
-
-    ifstream f(file);
-    string line;
-
-    getline(f,line);
-
-    while(getline(f,line)){
-
-        if(line.empty()) continue;
-
-        string id,item,gold,give,accept,decline;
-
-        stringstream ss(line);
-
-        getline(ss,id,',');
-        getline(ss,item,',');
-        getline(ss,gold,',');
-        getline(ss,give,',');
-        getline(ss,accept,',');
-        getline(ss,decline);
-
-        Trade t;
-
-        try{
-
-            t.goldReward = stof(gold);
-            t.nextAccept = accept;
-            t.nextDecline = decline;
-
-            trades[id] = t;
-
-        }catch(...){
-
-            cout << "Trade CSV error skipped: " << line << endl;
+        while(getline(f, line))
+        {
+            if(line.empty()) continue;
+            string id, q, a, correct, wrong;
+            stringstream ss(line);
+            getline(ss, id, ',');
+            getline(ss, q, ',');
+            getline(ss, a, ',');
+            getline(ss, correct, ',');
+            getline(ss, wrong);
+            Puzzle p;
+            p.setQuestion(q);
+            p.setAnswer(a);
+            p.setNextCorrect(correct);
+            p.setNextWrong(wrong);
+            puzzles[id] = p;
         }
     }
-}
+
+    static void loadTrade(const string &file, map<string, Trade> &trades)
+    {
+        ifstream f(file);
+        string line;
+        getline(f, line);
+
+        while(getline(f, line))
+        {
+            if(line.empty()) continue;
+            string id, item, gld, give, accept, decline;
+            stringstream ss(line);
+            getline(ss, id, ',');
+            getline(ss, item, ',');
+            getline(ss, gld, ',');
+            getline(ss, give, ',');
+            getline(ss, accept, ',');
+            getline(ss, decline);
+            try {
+                Trade t(item, stof(gld), give, accept, decline);
+                trades[id] = t;
+            }
+            catch(...) { cout << "Trade CSV error: " << line << "\n"; }
+        }
+    }
+
+    static void loadItems(const string &file, vector<Item> &items)
+    {
+        ifstream f(file);
+        string line;
+        getline(f, line);
+
+        while(getline(f, line))
+        {
+            if(line.empty()) continue;
+            stringstream ss(line);
+            string temp;
+            try {
+                int id, price, weight;
+                string name, category, description, effect;
+                getline(ss, temp, ',');       id = stoi(temp);
+                getline(ss, name, ',');
+                getline(ss, category, ',');
+                getline(ss, temp, ',');       price = stoi(temp);
+                getline(ss, temp, ',');       weight = stoi(temp);
+                getline(ss, description, ',');
+                getline(ss, effect);
+                items.push_back(Item(id, name, category, price,
+                                     weight, description, effect));
+            }
+            catch(...) { cout << "Skipping bad inventory row\n"; }
+        }
+    }
+
+    static void loadOccupations(const string &file, vector<Occupation> &occupations)
+    {
+        ifstream f(file);
+        if(!f.is_open()) { cout << "Error opening occupations.csv\n"; return; }
+        string line;
+        getline(f, line);
+
+        while(getline(f, line))
+        {
+            if(line.empty()) continue;
+            stringstream ss(line);
+            string temp;
+            try {
+                string gender, name, description;
+                int startGold;
+                getline(ss, gender, ',');
+                getline(ss, name, ',');
+                getline(ss, temp, ',');
+                temp.erase(remove(temp.begin(), temp.end(), '$'), temp.end());
+                startGold = stoi(temp);
+                getline(ss, description);
+                occupations.push_back(Occupation(gender, name, startGold, description));
+            }
+            catch(...) { cout << "Skipping bad occupation row\n"; }
+        }
+    }
+
+    static void loadStory(const string &file, vector<Story> &stories)
+    {
+        ifstream f(file);
+        string line;
+        getline(f, line);
+
+        while(getline(f, line))
+        {
+            if(line.empty()) continue;
+            string stage, text;
+            size_t commaPos = line.find(',');
+            stage = line.substr(0, commaPos);
+            text  = line.substr(commaPos + 1);
+
+            if(!text.empty() && text.front() == '"')
+            {
+                text.erase(0, 1);
+                while(text.back() != '"')
+                {
+                    string nextLine;
+                    getline(f, nextLine);
+                    text += "\n" + nextLine;
+                }
+                text.pop_back();
+            }
+            stories.push_back(Story(stage, text));
+        }
+    }
+};
 
 /* ================= GAME FUNCTIONS ================= */
 
