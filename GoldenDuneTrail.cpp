@@ -897,21 +897,419 @@ public:
     }
 };
 
+// Menu Manager Class
+class MenuManager {
+private:
+    Player player;
+
+    void loadAllData()
+    {
+        CsvLoader::loadItems("inventory.csv", player.getShopItems());
+        CsvLoader::loadOccupations("occupations.csv", player.getOccupations());
+        CsvLoader::loadStory("story.csv", player.getStories());
+    }
+
+    Game buildGame()
+    {
+        Game g;
+        g.loadScenes("Scenarios.csv");
+        g.loadChoices("Choice.csv");
+        g.loadCombat("Combat.csv");
+        g.loadPuzzle("Puzzle.csv");
+        g.loadTrade("Trade.csv");
+        return g;
+    }
+
+    void showStory(string stage)
+    {
+        cout << "\n";
+        for(auto &s : player.getStories())
+            if(s.getStage() == stage)
+                cout << s.getText() << "\n";
+    }
+
+    void showCredits()
+    {
+        ifstream file("credits.csv");
+        if(!file.is_open()) { cout << "\nCould not open credits.csv\n"; return; }
+        string line;
+        getline(file, line);
+        cout << "\n-----------------------------------\n";
+        cout << "           CREDITS\n";
+        cout << "-----------------------------------\n";
+        while(getline(file, line))
+        {
+            if(line.empty()) continue;
+            string role, name;
+            size_t commaPos = line.find(',');
+            role = line.substr(0, commaPos);
+            name = line.substr(commaPos + 1);
+            if(!name.empty() && name.front() == '"')
+            {
+                name.erase(0, 1);
+                while(name.back() != '"')
+                {
+                    string nextLine;
+                    getline(file, nextLine);
+                    name += "\n" + nextLine;
+                }
+                name.pop_back();
+            }
+            cout << left << setw(20) << role << name << "\n";
+        }
+        cout << "-----------------------------------\n";
+    }
+
+    string chooseGender()
+    {
+        int choice;
+        while(true)
+        {
+            cout << "\nChoose Gender\n";
+            cout << "-------------\n";
+            cout << "1. Male\n";
+            cout << "2. Female\n";
+            cout << "-------------\n";
+            cout << "Enter Choice: ";
+            cin >> choice;
+            cout << "------------------------------------------------------------------\n";
+            if(choice == 1) return "Male";
+            if(choice == 2) return "Female";
+            cout << "Invalid choice. Try again.\n";
+        }
+    }
+
+    bool chooseOccupation(string gender)
+    {
+        vector<Occupation> options;
+
+        cout << "\n                 |==========| Available Occupations |==========|\n\n";
+        cout << left << setw(4) << "ID" << setw(25) << "Occupation"
+             << setw(12) << "Salary" << "Description\n";
+        cout << string(80, '-') << "\n";
+
+        int index = 1;
+        for(auto &job : player.getOccupations())
+        {
+            if(job.getGender() == gender)
+            {
+                cout << left << setw(4)  << index
+                     << setw(25) << job.getName()
+                     << setw(12) << ("$" + to_string(job.getStartingGold()))
+                     << job.getDescription() << "\n";
+                options.push_back(job);
+                index++;
+            }
+        }
+        cout << "--------------------------------------------------------------------------------\n";
+        cout << "0. Go Back\n";
+        cout << "--------------------\n";
+        cout << "Choose occupation (ID): ";
+
+        int choice;
+        cin >> choice;
+
+        if(choice == 0) return false;
+        if(choice < 1 || choice > (int)options.size())
+        {
+            cout << "Invalid choice.\n";
+            return false;
+        }
+
+        player.setGold(options[choice - 1].getStartingGold());
+        cout << "\nYou chose: " << options[choice - 1].getName() << "\n";
+        cout << "Starting Gold: $" << player.getGold() << "\n";
+        return true;
+    }
+
+    void showCurrentStatus()
+    {
+        cout << "\n--- Current Status ---\n";
+        cout << "Gold: $" << player.getGold() << "\n";
+        cout << "Weight: " << player.getCurrentWeight()
+             << "/" << player.getMaxCarryWeight() << "\n";
+        cout << "Inventory: ";
+        if(player.inventoryEmpty()) cout << "None";
+        else for(auto &item : player.getInventory())
+            cout << item.getName() << ", ";
+        cout << "\n----------------------\n";
+    }
+
+    void showCategory(string category)
+    {
+        cout << "\n                        |==========| " << category << " |==========|\n\n";
+        cout << left << setw(4) << "ID" << setw(25) << "Name"
+             << setw(8) << "Price" << setw(8) << "Weight" << "Description\n";
+        cout << string(80, '-') << "\n";
+
+        for(auto &item : player.getShopItems())
+        {
+            if(item.getCategory() == category)
+            {
+                cout << left << setw(4)  << item.getId()
+                     << setw(25) << item.getName()
+                     << setw(8)  << ("$" + to_string(item.getPrice()))
+                     << setw(8)  << item.getWeight()
+                     << item.getDescription() << "\n";
+            }
+        }
+    }
+
+    void buyItem(string category)
+    {
+        showCategory(category);
+        cout << "--------------------------------------------------------------------------------\n";
+
+        int choice;
+        while(true)
+        {
+            showCurrentStatus();
+            cout << "Choose item (0 to skip): ";
+            cin >> choice;
+
+            if(choice == 0) { cout << "Skipping " << category << ".\n"; return; }
+
+            bool found = false;
+            for(auto &item : player.getShopItems())
+            {
+                if(item.getId() == choice && item.getCategory() == category)
+                {
+                    found = true;
+                    if(player.getGold() < item.getPrice())
+                    {
+                        cout << "Not enough gold!\n";
+                        break;
+                    }
+                    if(player.getCurrentWeight() + item.getWeight() > player.getMaxCarryWeight())
+                    {
+                        cout << "Too heavy!\n";
+                        break;
+                    }
+                    player.subtractGold(item.getPrice());
+                    player.addWeight(item.getWeight());
+                    player.addToInventory(item);
+                    if(item.getCategory() == "Food")
+                    {
+                        // Match the days assigned in buildStats()
+                        if(item.getId() == 1) player.addFood(6);
+                        if(item.getId() == 2) player.addFood(9);
+                        if(item.getId() == 3) player.addFood(7);
+                        if(item.getId() == 4) player.addFood(8);
+                        if(item.getId() == 5) player.addFood(10);
+                    }
+                    cout << item.getName() << " purchased!\n";
+                    return;
+                }
+            }
+            if(!found) cout << "Invalid choice.\n";
+        }
+    }
+
+    void showInventory()
+    {
+        cout << "\n=== Your Supplies ===\n";
+        for(auto &item : player.getInventory())
+            cout << item.getCategory() << " : " << item.getName() << "\n";
+        cout << "Gold left: $" << player.getGold() << "\n";
+    }
+
+    void showJourneyStatusBrief()
+    {
+        cout << "\n+---------- Caravan Status ----------+\n";
+        cout << "| Player    : " << left << setw(24) << player.getName() << "|\n";
+        cout << "| HP        : " << setw(4) << player.getHP()         << " / 100             |\n";
+        cout << "| Gold      : $" << setw(4) << player.getGold()      << "                   |\n";
+        cout << "+------------------------------------+\n";
+    }
+
+    string loadGame()
+    {
+        ifstream f("savegame.csv");
+        if(!f.is_open())
+        {
+            cout << "\nNo save file found (savegame.csv missing).\n";
+            return "";
+        }
+
+        player.reset();
+        player.getInventory().clear();
+
+        string resumeScene = "";
+        string line;
+        getline(f, line); // skip header
+
+        while(getline(f, line))
+        {
+            if(line.empty()) continue;
+            stringstream ss(line);
+            string field, value;
+            getline(ss, field, ',');
+            getline(ss, value);
+
+            if(field == "playerName")    player.setName(value);
+            else if(field == "scene")    resumeScene = value;
+            else if(field == "gold") { try { player.setGold(stoi(value)); } catch(...){} }
+            else if(field == "playerHP") { try { player.setHP(stoi(value)); } catch(...){} }
+            else if(field == "playerAttack") { try { player.setAttack(stoi(value)); } catch(...){} }
+            else if(field == "heatResist") { try { player.setHeatResist(stoi(value)); } catch(...){} }
+            else if(field == "stormResist") { try { player.setStormResist(stoi(value)); } catch(...){} }
+            else if(field == "travelSpeed") { try { player.setTravelSpeed(stoi(value)); } catch(...){} }
+            else if(field == "foodSupply") { try { player.setFoodSupply(stoi(value)); } catch(...){} }
+            else if(field == "currentWeight") { try { player.setCurrentWeight(stoi(value)); } catch(...){} }
+            else if(field == "inventory")
+            {
+                try {
+                    int id = stoi(value);
+                    for(auto &item : player.getShopItems())
+                        if(item.getId() == id)
+                            player.addToInventory(item);
+                } catch(...) {}
+            }
+        }
+
+        if(resumeScene.empty())
+        {
+            cout << "\nSave file is corrupted or empty.\n";
+            return "";
+        }
+
+        cout << "\nGame loaded! Welcome back, " << player.getName() << ".\n";
+        cout << "Resuming from scene " << resumeScene << "...\n";
+        return resumeScene;
+    }
+
+    int mainMenu()
+    {
+        int choice;
+        cout << "\n====================================\n";
+        cout << "      GOLDEN DUNES TRAIL\n";
+        cout << "       The Lost Caravan\n";
+        cout << "====================================\n\n";
+        cout << "1. Play\n";
+        cout << "2. Load Game\n";
+        cout << "3. How To Play\n";
+        cout << "4. Credits\n";
+        cout << "5. Exit\n";
+        cout << "\n------------\n";
+        cout << "Enter Choice: ";
+        cin >> choice;
+        cout << "------------------------------------------------------------------\n";
+        return choice;
+    }
+public:
+
+    MenuManager() {}
+
+    void run()
+    {
+        loadAllData();
+
+        while(true)
+        {
+            int menu = mainMenu();
+
+            if(menu == 5) return;
+
+            if(menu == 3)
+            {
+                cout << "\nHow To Play\n-----------\n";
+                cout << "Choose your name, gender and occupation to set your starting gold.\n";
+                cout << "Buy food, clothing, a weapon and an animal before departing.\n\n";
+                cout << "During the journey:\n";
+                cout << "  - Food drains every scene. Faster animals reduce food drain.\n";
+                cout << "  - Clothing protects against heat and sandstorm HP loss.\n";
+                cout << "  - Your weapon determines your attack power in combat.\n";
+                cout << "  - Puzzles test your knowledge. Answer correctly for a better path.\n";
+                cout << "  - Trades happen automatically when you choose that path.\n";
+                cout << "  - Press S at any choice to save your game.\n";
+                cout << "  - Reach the Gates of Aurion (S31) to win.\n";
+                continue;
+            }
+
+            if(menu == 4)
+            {
+                showCredits();
+                continue;
+            }
+
+            if(menu == 2)
+            {
+                string resumeScene = loadGame();
+                if(resumeScene.empty()) continue;
+
+                showJourneyStatusBrief();
+
+                Game game = buildGame();
+                game.setStartScene(resumeScene);
+                game.start(player, false);
+
+                cout << "\n====================================\n";
+                cout << "  Play again? (1 = Yes  2 = Exit)\n";
+                cout << "====================================\n";
+                cout << "  Choice: ";
+                int again; cin >> again;
+                if(again != 1) return;
+                continue;
+            }
+
+            if(menu == 1)
+            {
+                player.reset();
+
+                cin.ignore();
+                cout << "\nEnter your traveler name: ";
+                string name;
+                getline(cin, name);
+                if(name.empty()) name = "Traveler";
+                player.setName(name);
+                cout << "\nWelcome, " << player.getName() << "!\n";
+
+                showStory("MENU");
+                showStory("PRE_GENDER");
+
+                string gender;
+                while(true)
+                {
+                    gender = chooseGender();
+                    showStory("POST_GENDER");
+                    if(gender == "Male") showStory("MALE_INFO");
+                    else                 showStory("FEMALE_INFO");
+                    if(chooseOccupation(gender)) break;
+                }
+
+                showStory("PRE_FOOD");
+                buyItem("Food");
+
+                showStory("PRE_CLOTHING");
+                buyItem("Clothing");
+
+                showStory("PRE_WEAPON");
+                buyItem("Weapon");
+
+                showStory("PRE_ANIMAL");
+                buyItem("Animal");
+
+                showInventory();
+
+                Game game = buildGame();
+                game.start(player);
+
+                cout << "\n====================================\n";
+                cout << "  Play again? (1 = Yes  2 = Exit)\n";
+                cout << "====================================\n";
+                cout << "  Choice: ";
+                int again; cin >> again;
+                if(again != 1) return;
+            }
+        }
+    }
+};
+
 // Main
-int main(){
-
-    Game game;
-
-    game.menu();
-
-    game.loadScenes("Scenarios.csv");
-    game.loadChoices("Choice.csv");
-    game.loadCombat("Combat.csv");
-    game.loadPuzzle("Puzzle.csv");
-    game.loadTrade("Trade.csv");
-
-    game.start();
-
+int main()
+{
+    MenuManager app;
+    app.run();
     return 0;
 }
 
