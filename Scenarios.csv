@@ -21,7 +21,7 @@ They speak of being robbed and warn that dangerous groups now roam these dunes."
 S6,"The First Clue
 In the midst of the night, you cower in the rocks, Animals are told to grow restless during sandstorms
 and travelers seek deep. Something unnatural may be within. Ancient symbols are carved into their surfaces.
-They match the markings drawn in the merchant’s Map,Aurion. You may be following the correct path."
+They match the markings drawn in the merchant’s Map. You may be following the correct path."
 S7,"Bandit Ambush
 Figures like shadow appear on the rock. Within moments Bandits burst from behind the rocks with
 blades drawn at full speed. Desert bandits are known for raiding travelers. These are not desperate
@@ -54,82 +54,114 @@ a golden relic emerges among the stones.
 Its markings match those seen in ruins and fragments of the ancient map.
 This was no random beast — it was a guardian."
 S13,"The Forgotten Trade Post
-You arrive at a collapsed trade outpost half swallowed by the dunes.
+You arrive at a collapsed trade outpost half swallowed by the dunes and faded banners.
+The smell of old spices and leather still hangs in the air between crumbling walls.
 Broken stalls and scattered crates hint at a once-thriving hub.
 Tracks and signs suggest multiple caravans — including your rivals — passed through recently."
 S14,"The Desert Merchant
-A lone merchant emerges, watching you carefully.
-He offers maps, supplies, and knowledge — for a price.
-In the desert, information can be more valuable than gold."
+A lone merchant emerges, carefully watching your approach from behind the last intact stall.
+He names no price until he has looked you over completely.
+Maps, dried provisions, supplies, and curious objects of knowledge cover his table, all for a price.
+In the desert, information can be more valuable than gold.
+He knows what things are worth out here."
 S15,"Tracks in the Sand
-You follow faint tracks stretching across the dunes.
-They are fresh enough to matter — and too organized to be random travelers.
-The rival expedition is ahead… and moving fast."
+You refuse the merchant's offer and push on, following faint tracks along the dune line.
+The prints are recent enough to matter and move with purpose rather than wandering.
+it looks too organized to be random travelers. Someone came this way and knew exactly where
+they were going. The rival expedition is ahead… and moving fast."
 S16,"The Ancient Road
-Ruined watchtowers rise over a buried stone road.
-This path once connected the old civilization to distant lands.
-If the journal is correct, this road may lead directly toward Aurion."
+Ruined watchtowers rise from the dunes on either side, guarding a long buried road now exposed by shifting sand.
+Their stones have taken on the colour of the desert itself, almost invisible until you are close.
+Between them the ancient road stretches ahead, cracked and half submerged but unmistakably deliberate.
+his path once connected the old civilization to distant lands.
+If the journal is correct, this road may lead directly toward Aurion.
 S17,"The Watchtower
-Inside a crumbling tower, broken stairs spiral upward.
+You step through the gap where a door once stood and the desert sounds go muffled around you.
+Broken stairs spiral upward along the inner wall, some steps missing, others tilted sharply.
+Somewhere above, wind moves through the upper chamber. The tower still holds.
 Faded carvings line the walls — warnings, directions, or perhaps prayers.
 Someone once guarded this place with purpose."
 S18,"The Riddle Door
-At the tower’s peak stands a sealed stone door.
-Ancient symbols glow faintly, forming a riddle meant to test travelers.
-Only those who understand may pass forward."
+At the top of the broken stairs you find a sealed stone door carved with a single ancient riddle, probably
+to test whoever wished to open it.
+The door has no handle and no visible mechanism, only words worn smooth by centuries of wind.
+Whoever sealed this intended only those with knowledge and understand may pass through."
 S19,"Ambush in the Pass
-A narrow canyon traps your caravan as bandits strike again.
+You enter a narrow pass between high rock walls where the old road cuts through a ridge.
+Too late you see the shadows shift above. Bandits drop from the rocks on both sides, blades already drawn.
 These attackers are more organized — possibly working for another group.
+Their captain stands at the far end of the pass, cutting off any retreat.
+A narrow canyon traps your caravan as bandits strike again.
 You may not be the only ones racing toward the Golden City."
 S20,"Bandit Secrets
-After defeating the attackers, you search their belongings.
-Among supplies, you find fragments of a map identical to your own.
-The bandits were not just raiders — they were hunting relics."
+You defeating and drive off the attackers and search their scattered belongings left in the dust.
+Among dried rations and rope you find pieces of carved stone and a note in the same symbols as the milestone.
+These bandits were no ordinary raiders. They were hunting relics and potentially following the same road as you.
+A ruined altar stands half buried to one side of the pass."
 S21,"The Underground Gallery
-A hidden entrance leads you beneath the ruins into a vast chamber.
+Beyond the stone door lies a cool underground gallery, a hidden entrance leading you beneath the ruins
+into a vast chamber lined with stone pillars stretching into shadow.
+The air is clean and dry, sealed for centuries against the desert above.
+Carvings cover every surface. A faint breeze moves from somewhere deeper underground.
 Stone pillars line the path, carved with stories of a lost civilization.
 You have stepped into the world of Aurion."
 S22,"The Trap Hall
-Without warning, darts fire from the walls.
-Ancient defenses activate, guarding what lies deeper within.
+Hidden darts burst from the walls Without warning with a sharp crack, forcing you to dive behind a fallen column.
+The mechanism is impossibly still active after all this time.
+Pressure plates worn smooth by other travelers line the floor of the hall ahead.
 This place was built to protect something valuable."
 S23,"The Jackal Guardian
-A golden jackal statue blocks your path.
-Its eyes gleam as though alive, and symbols at its base suggest a test of worth.
-This guardian decides who may pass."
+A golden jackal statue blocks the passage with eyes of polished dark stone that follow your lantern.
+It sits on a plinth ringed with ancient symbols suggest a test of worthand the corridor behind it is sealed .
+Objects left at its base by other travelers have turned to dust. It has been waiting a long time
+suggesting a test of worth. This guardian decides who may pass."
 S24,"The Shifting Corridor
+The floor sinks under your weight with a deep grinding sound and the corridor tilts sharply.
+Stone grates against stone as the angle steepens before stabilizing.
+The passage slopes steeply downward ahead and the way behind rises at an impossible angle
 The ground shifts violently as hidden mechanisms activate.
-The corridor tilts and threatens to collapse.
 Every step forward is a gamble."
 S25,"The Hidden Oasis
-Light breaks through as you emerge into a lush oasis.
-Clear water flows, untouched by the harsh desert.
-This place feels protected — possibly by the same ancient power."
+Light pours from above as you emerge into a hidden oasis cupped between high dune walls.
+Palm trees ring a clear pool and the air smells of water and green things after so long underground,
+untouched by the harsh desert..
+Many feet have passed through here before yours, but right now it feels like a secret kept for you."
 S26,"Oasis of Secrets
-The oasis is alive with travelers, mystics, and explorers.
+The oasis is alive and crowded with traders, explorers and whispering mystics gathered around the pool.
+Lean-to shelters fill the space between the palms and voices carry across the water.
 Stories of Aurion, rival caravans, and relics fill the air.
+Near the bank, robed figures speak in low voices to those who approach with the right questions.
 Every person here is chasing destiny."
 S27,"The Old Prospector
-An old prospector waves you over excitedly.
-He speaks of treasures buried beneath the dunes and paths others missed.
+An old prospector waves you over with excitedly, hands stained by years of dust and desert work.
+He looks at you the way experienced people look at things more interesting than they appear.
+He has found things other people walked past and missed. He wants to see what you are carrying before he says more.
 He may hold knowledge others would kill for."
 S28,"A Moment of Rest
-You sit beside the water, letting the journey pause.
-The desert feels distant here, but not gone.
+You sit beside the oasis pool, letting the journey pause.
+Others nearby speak quietly or sleep in the shade of the palms. The desert feels distant here, but not gone.
+Behind the trees to the north a narrow path leads away from the oasis into shadow, easy to miss
+if you were not already looking for it.
 Even peace in the dunes is temporary."
 S29,"The Hidden Path
-Behind the oasis, a concealed trail leads toward ancient ruins.
-Few would notice it without careful observation.
+You follow the hidden path behind the palms toward distant ruins, stepping away from firelight and voices.
+Stones placed just below the surface mark the way, invisible unless you know to look down with careful observation.
+From somewhere ahead, felt more than heard, the ground trembles with a low and steady rhythm.
 This may be a secret route toward Aurion."
 S30,"The Desert Awakens
-The sand trembles beneath your feet.
-Something massive moves below, circling your caravan.
-The guardian of the dunes has found you."
+The sand rumbles as something immense moves just beneath your feet, circling in slow deliberate arcs.
+The surface breaks in a long heaving ridge and sinks again. Whatever it is, it is enormous and patient.
+Distant torchlight glows on the horizon ahead. Between you and it, the desert shakes once more."
 S31,"The Gates of Aurion
-At last, the Golden City rises before you.
-Massive gates stand tall, guarding secrets lost to time.
+At last, you stand before the Gates of Aurion, the fabled Golden City.
+Two immense columns rise from the desert floor, inlaid with gold the centuries have not dimmed.
+Between them the ancient road continues smooth and clear into towers and arches glowing with warm light.
+The legends were true. You have arrived.
 You have reached the end — or the beginning of something greater."
 S32,"Journey’s End
-You leave the dunes forever changed.
+You leave the dunes forever changed, richer in gold and in stories worth telling.
+The frontier town will look different when you return to it. So will you.
+The Golden Dunes Trail shifts in the wind behind you, already covering your tracks,
+waiting for the next traveler who hears the old stories and decides to believe them.
 Whether you found gold, knowledge, or simply survival,
 your journey across the Golden Dunes has become legend."
