@@ -8,7 +8,7 @@
 
 using namespace std;
 
-/ Item Class
+// Item Class
 class Item {
 private:
     int id;
@@ -170,33 +170,217 @@ public:
     void setNextWrong(string w)  { nextWrong = w; }
 };
 
-//Trade
-class Trade{
-
-public:
+// Trade Class
+class Trade {
+private:
+    string itemRequired;
     float goldReward;
+    string itemGiven;
     string nextAccept;
     string nextDecline;
-};
-
-class Game{
-
-private:
-
-    map<string,Scene> scenes;
-    vector<Choice> choices;
-    map<string,Combat> combats;
-    map<string,Puzzle> puzzles;
-    map<string,Trade> trades;
-
-    Player player;
-
-    string current_scene;
-    string last_scene_shown;
 
 public:
 
-/* ================= MENU ================= */
+    Trade() : goldReward(0) {}
+
+    Trade(string req, float gold, string given, string accept, string decline)
+        : itemRequired(req), goldReward(gold), itemGiven(given),
+          nextAccept(accept), nextDecline(decline) {}
+
+    string getItemRequired() const { return itemRequired; }
+    float  getGoldReward() const { return goldReward; }
+    string getItemGiven() const { return itemGiven; }
+    string getNextAccept() const { return nextAccept; }
+    string getNextDecline() const { return nextDecline; }
+
+    void setItemRequired(string r) { itemRequired = r; }
+    void setGoldReward(float g) { goldReward = g; }
+    void setItemGiven(string gi) { itemGiven = gi; }
+    void setNextAccept(string a) { nextAccept = a; }
+    void setNextDecline(string d) { nextDecline = d; }
+};
+
+// Player Class
+class Player {
+private:
+    string name;
+    int gold;
+    int maxCarryWeight;
+    int currentWeight;
+    int foodSupply;
+    int hp;
+    int attack;
+    int heatResist;
+    int stormResist;
+    int travelSpeed;
+    vector<Item> inventory;
+    vector<Item> shopItems;
+    vector<Occupation> occupations;
+    vector<Story> stories;
+
+public:
+
+    Player()
+        : name("Traveler"), gold(0), maxCarryWeight(100), currentWeight(0), foodSupply(0), hp(100), attack(5),
+          heatResist(0), stormResist(0), travelSpeed(1) {}
+
+    Player(string playerName)
+        : name(playerName), gold(0), maxCarryWeight(100), currentWeight(0), foodSupply(0), hp(100), attack(5),
+          heatResist(0), stormResist(0), travelSpeed(1) {}
+
+    string getName() const { return name; }
+    int getGold() const { return gold; }
+    int getMaxCarryWeight() const { return maxCarryWeight; }
+    int getCurrentWeight() const { return currentWeight; }
+    int getFoodSupply() const { return foodSupply; }
+    int getHP() const { return hp; }
+    int getAttack() const { return attack; }
+    int getHeatResist() const { return heatResist; }
+    int getStormResist() const { return stormResist; }
+    int getTravelSpeed() const { return travelSpeed; }
+    vector<Item>& getInventory() { return inventory; }
+    const vector<Item>& getInventory() const { return inventory; }
+    vector<Item>& getShopItems() { return shopItems; }
+    vector<Occupation>& getOccupations() { return occupations; }
+    vector<Story>& getStories() { return stories; }
+
+
+    void setName(string n) { name = n; }
+    void setGold(int g) { gold = g; }
+    void setHP(int h) { hp = h; }
+    void setAttack(int a) { attack = a; }
+    void setHeatResist(int h){ heatResist = h; }
+    void setStormResist(int s) { stormResist = s; }
+    void setTravelSpeed(int t) { travelSpeed = t; }
+    void setFoodSupply(int f) { foodSupply = f; }
+    void setCurrentWeight(int w) { currentWeight = w; }
+
+    void addGold(int amount) { gold += amount; }
+    void subtractGold(int amount) { gold -= amount; }
+    void addHP(int amount) { hp += amount; }
+    void subtractHP(int amount) { hp -= amount; }
+    void addFood(int amount) { foodSupply += amount; }
+    void subtractFood(int amount) { foodSupply -= amount; if(foodSupply < 0) foodSupply = 0; }
+    void addWeight(int amount) { currentWeight += amount; }
+
+    void addToInventory(Item item) { inventory.push_back(item); }
+    void clearInventory() { inventory.clear(); }
+    bool inventoryEmpty() const { return inventory.empty(); }
+
+    void reset()
+    {
+        gold = 0;
+        currentWeight = 0;
+        foodSupply = 0;
+        hp  = 100;
+        attack = 5;
+        heatResist = 0;
+        stormResist = 0;
+        travelSpeed = 1;
+        inventory.clear();
+    }
+
+    void buildStats()
+    {
+        hp = 100;
+        attack = 5;
+        heatResist = 0;
+        stormResist = 0;
+        travelSpeed = 1;
+        foodSupply = 0;
+
+        for(auto &item : inventory)
+        {
+            if(item.getCategory() == "Food") {
+
+            }
+                if(item.getId() == 1) foodSupply += 6;
+                if(item.getId() == 2) foodSupply += 9;
+                if(item.getId() == 3) foodSupply += 7;
+                if(item.getId() == 4) foodSupply += 8;
+                if(item.getId() == 5) foodSupply += 10;
+
+            if(item.getCategory() == "Clothing")
+            {
+
+                heatResist  += 10;
+                stormResist += 10;
+            }
+
+            if(item.getCategory() == "Weapon")
+            {
+                if(item.getId() == 11) attack = 15;
+                if(item.getId() == 12) attack = 18;
+                if(item.getId() == 13) attack = 10;
+                if(item.getId() == 14) attack = 25;
+                if(item.getId() == 15) attack = 20;
+            }
+
+            if(item.getCategory() == "Animal")
+            {
+                if(item.getId() == 16) travelSpeed = 3;
+                if(item.getId() == 17) travelSpeed = 2;
+                if(item.getId() == 18) travelSpeed = 1;
+                if(item.getId() == 19) travelSpeed = 3;
+                if(item.getId() == 20) travelSpeed = 4;
+            }
+        }
+    }
+};
+
+// CsnLoader Class
+class CsvLoader {
+public:
+    static void loadScenes(const string &file, map<string, Scene> &scenes, string &firstScene)
+    {
+        ifstream f(file);
+        string line;
+        getline(f, line);
+
+        while(getline(f, line))
+        {
+            if(line.empty()) continue;
+            string id, desc;
+            size_t commaPos = line.find(',');
+            id   = line.substr(0, commaPos);
+            desc = line.substr(commaPos + 1);
+
+            if(!desc.empty() && desc.front() == '"')
+            {
+                desc.erase(0, 1);
+                while(desc.back() != '"')
+                {
+                    string nextLine;
+                    getline(f, nextLine);
+                    desc += "\n" + nextLine;
+                }
+                desc.pop_back();
+            }
+            scenes[id] = Scene(id, desc);
+            if(firstScene == "") firstScene = id;
+        }
+    }
+
+    static void loadChoices(const string &file, vector<Choice> &choices)
+    {
+        ifstream f(file);
+        string line;
+        getline(f, line);
+
+        while(getline(f, line))
+        {
+            if(line.empty()) continue;
+            string cid, parent, text, type, rid, next;
+            stringstream ss(line);
+            getline(ss, cid, ',');
+            getline(ss, parent, ',');
+            getline(ss, text, ',');
+            getline(ss, type, ',');
+            getline(ss, rid, ',');
+            getline(ss, next);
+            choices.push_back(Choice(parent, text, type, rid, next));
+        }
+    }
 
 void menu(){
 
