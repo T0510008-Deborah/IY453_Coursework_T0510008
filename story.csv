@@ -1,0 +1,53 @@
+stage,text
+MENU,"The year is 1873, an age of exploration, caravans and dangerous frontiers. For decades the western kingdoms
+have suffered drought, failed harvests and political unrest. Rumors have spread of a distant land beyond the endless
+desert known as The Golden Dunes. Travelers whisper that beyond the dunes stands a hidden city of knowledge, relics
+and new beginnings. Now thousands gather with wagons and caravans, risking everything to reach the Golden City.
+An explorer recently returned from the eastern deserts carrying a strange golden relic. Before he could explain
+its origin, he disappeared mysteriously.The only clue left behind was a map pointing toward the Golden Dunes.
+------------------------------------------------------------------"
+
+PRE_GENDER,"People Are Migrating as the old provinces of the west collapses.
+Trade routes have failed, rivers have dried and famine grips many towns. Explorers returning from the east speak of
+fertile lands, and beyond the desert and a legendary settlement called Aurion, the Golden City. Those who reach it
+are promised land, opportunity, and a new life. But between here and there lies 500 miles of deadly desert.
+------------------------------------------------------------------"
+
+POST_GENDER,"Before beginning the journey, every traveler must decide their path."
+POST_GENDER,"Each role carries its own advantages during the journey.
+Your choice will influence how you survive the Golden Dunes.
+------------------------------------------------------------------"
+
+MALE_INFO,"Men of the frontier often took roles of strength and leadership.
+Male travelers often worked in physically demanding trades or dangerous expeditions."
+FEMALE_INFO,"Women of the frontier carried knowledge that kept caravans alive.
+Female travelers commonly mastered healing, education and trade skills essential for survival.
+------------------------------------------------------------------"
+
+PRE_FOOD,"--------------
+The Food Market
+--------------
+At the edge of the frontier lies the Far East Market, famous for feeding entire caravans. Merchants shout their prices
+as travelers rush to buy supplies. Many journeys have failed because a caravan underestimated its food.
+Stock wisely, the Golden Dunes are unforgiving.
+------------------------------------------------------------------"
+PRE_CLOTHING,"--------------
+Clothing Store
+--------------
+Across the street stands The Silk Caravan Outfitters, known for garments built to survive harsh climates. Proper clothing
+shields travelers from sandstorms and freezing desert nights. Without it, even the strongest adventurer may fall.
+------------------------------------------------------------------"
+PRE_WEAPON,"--------------
+Weapons Store
+--------------
+Further down the road stands Iron Fang Armory, a shop filled with weapons of legendary reputation. The blacksmith proudly
+claims that one of his blades once slew a desert warlord. Weapons are not only for hunting - bandits and desert beasts
+roam the dunes. A poorly armed caravan rarely reaches its destination.
+------------------------------------------------------------------"
+PRE_ANIMAL,"--------------
+Animal Market
+--------------
+At the far end of the settlement lies the Beast Caravan Grounds. Caravans choose between famous animals built for long
+journeys. Some whisper of rare mythical creatures trained by distant tribes. The animal you choose will pull your wagon
+and carry your hopes across the desert. Choose wisely - your beast will walk every mile beside you.
+------------------------------------------------------------------"

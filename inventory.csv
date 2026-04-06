@@ -1,0 +1,21 @@
+ID,Name,Category,Price,Weight,Description,TrailEffect
+1,Dried Dates,Food,120,1,Sweet desert fruit preserved for travel,Restores small hunger
+2,Salted Camel Meat,Food,180,2,Preserved meat carried by desert caravans,Restores medium hunger
+3,Flatbread Rations,Food,140,1,Hard bread baked for long journeys,Reduces hunger slowly
+4,Golden Fig Cakes,Food,200,1,Rare sweet cakes carried by wealthy merchants,Boosts morale
+5,Sun-Dried Lizard Jerky,Food,160,2,Tough reptile jerky eaten by desert scouts,Restores hunger
+6,Sand Nomad Cloak,Clothing,220,2,Loose cloak protecting travelers from harsh sun,Reduces heat damage
+7,Caravan Traveler Robes,Clothing,210,2,Robes worn by traders crossing the dunes,Improves heat resistance
+8,Dune Ranger Boots,Clothing,190,2,Strong boots designed for long desert marches,Reduces travel fatigue
+9,Merchant Turban,Clothing,150,1,Head wrap protecting from sandstorms,Reduces storm damage
+10,Dust Walker Coat,Clothing,230,3,Heavy coat used during cold desert nights,Prevents cold damage
+11,Flintlock Pistol,Weapon,260,3,Single shot pistol used by frontier explorers,Ranged damage
+12,Caravan Saber,Weapon,240,3,Curved sword used by caravan guards,Melee damage
+13,Nomad Dagger,Weapon,170,1,Small blade used for survival and defense,Fast attack
+14,Repeating Rifle,Weapon,300,4,Advanced frontier rifle capable of rapid fire,High ranged damage
+15,Storm Bow,Weapon,250,2,Ancient bow rumored to strike like lightning,Silent ranged damage
+16,Desert Horse,Animal,280,0,Fast horse bred for desert travel,Increases travel speed
+17,Caravan Camel,Animal,250,0,Classic beast of burden for desert caravans,High carrying capacity
+18,Oxen and Wagon,Animal,300,0,Strong oxen pulling a supply wagon,Maximum cargo capacity
+19,Sand Strider Lizard,Animal,270,0,Giant rideable lizard that glides across dunes,Very fast desert travel
+20,Sunback Griffin,Animal,300,0,Mythical creature with eagle wings and lion body,Extremely fast travel

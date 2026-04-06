@@ -1,5 +1,5 @@
 puzzleID,question,answer,nextSceneCorrect,nextSceneWrong
-P1,The milestone shows a rising sun over dunes Which direction do you follow,east,S9,S6
-P2,What walks on four legs in the morning two at noon and three in the evening,human,S21,S22
+P1,The more you take from me the larger i grow,hole,S9,S6
+P2,I march endlessly but never grow tired empires fall beneath my passing,time,S21,S22
 P3,The jackal must face the rising sun Which direction do you turn it,left,S25,S24
-P4,Solve 7 plus 8 times 2,23,S29,S28
+P4,What is the one thing every traveler needs and yet can never carry enough of,water,S29,S28

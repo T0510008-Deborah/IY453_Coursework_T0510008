@@ -3,163 +3,96 @@
 #include <sstream>
 #include <vector>
 #include <map>
+#include <iomanip>
+#include <algorithm>
 
 using namespace std;
 
 // Item
 class Item {
-public:
-    string name;
-    string type;
-    float attack;
-    float defense;
-    float health;
-
-    Item(){}
-
-    Item(string n,string t,float a,float d,float h){
-        name=n;
-        type=t;
-        attack=a;
-        defense=d;
-        health=h;
-    }
-};
-
-// Player
-class Player {
-
 private:
-
+    int id;
     string name;
-    float health = 100;
-    float attack = 5;
-    float defense = 2;
-    int score = 0;
+    string category;
+    int price;
+    int weight;
+    string description;
+    string effect;
 
 public:
+    Item(int id, string name, string category, int price, int weight, string description, string effect)
+        : id(id), name(name), category(category), price(price), weight(weight), description(description), effect(effect) {}
 
-    vector<Item> inventory;
-
-    void setName(string n){
-        name=n;
-    }
-
-    string getName(){
-        return name;
-    }
-
-    float getHealth(){
-        return health;
-    }
-
-    float getAttack(){
-        return attack;
-    }
-
-    float getDefense(){
-        return defense;
-    }
-
-    int getScore(){
-        return score;
-    }
-
-    void setHealth(float h){
-        health=h;
-    }
-
-    void setScore(int s){
-        score=s;
-    }
-
-    void damage(float d){
-
-        float finalDamage = d - defense;
-
-        if(finalDamage < 0)
-            finalDamage = 0;
-
-        health -= finalDamage;
-
-        if(health < 0)
-            health = 0;
-    }
-
-    void heal(float h){
-        health += h;
-    }
-
-    void addScore(int s){
-        score += s;
-    }
-
-    void addItem(Item item){
-
-        inventory.push_back(item);
-
-        attack += item.attack;
-        defense += item.defense;
-        health += item.health;
-
-        cout << "\nItem collected: " << item.name << endl;
-    }
-
-    void showInventory(){
-
-        cout << "\n--- INVENTORY ---\n";
-
-        if(inventory.empty()){
-            cout << "Inventory empty\n";
-            return;
-        }
-
-        for(Item i : inventory){
-            cout << i.name << " (" << i.type << ")\n";
-        }
-    }
-
-    void showStats(){
-
-        cout << "\n--- PLAYER STATS ---\n";
-        cout << "Health: " << health << endl;
-        cout << "Attack: " << attack << endl;
-        cout << "Defense: " << defense << endl;
-        cout << "Score: " << score << endl;
-    }
+    int    getId()          const { return id; }
+    string getName()        const { return name; }
+    string getCategory()    const { return category; }
+    int    getPrice()       const { return price; }
+    int    getWeight()      const { return weight; }
+    string getDescription() const { return description; }
+    string getEffect()      const { return effect; }
 };
 
-// Scene
-class Scene {
-public:
-    string id;
+
+// Occupation
+class Occupation {
+private:
+    string gender;
+    string name;
+    int    startingGold;
     string description;
 
-    Scene() {}
-
-    Scene(string i, string d) {
-        id = i;
-        description = d;
-    }
-};
-
-// Choice
-class Choice {
 public:
-    string parentScene;
-    string text;
-    string resultType;
-    string resultID;
-    string nextScene;
+    Occupation(string gender, string name, int startingGold, string description)
+        : gender(gender), name(name), startingGold(startingGold), description(description) {}
 
-    Choice(string p, string t, string r, string id, string n) {
-        parentScene = p;
-        text = t;
-        resultType = r;
-        resultID = id;
-        nextScene = n;
-    }
+    string getGender()       const { return gender; }
+    string getName()         const { return name; }
+    int    getStartingGold() const { return startingGold; }
+    string getDescription()  const { return description; }
 };
+
+// Story
+class Story {
+private:
+    string stage;
+    string text;
+
+public:
+    Story(string stage, string text) : stage(stage), text(text) {}
+
+    string getStage() const { return stage; }
+    string getText()  const { return text; }
+};
+
+// Load Story
+void loadStory()
+{
+    ifstream file("story.csv");
+    string line;
+    getline(file, line);
+
+    while(getline(file, line))
+    {
+        if(line.empty()) continue;
+        string stage, text;
+        size_t commaPos = line.find(',');
+        stage = line.substr(0, commaPos);
+        text  = line.substr(commaPos + 1);
+
+        if(!text.empty() && text.front() == '"')
+        {
+            text.erase(0, 1);
+            while(text.back() != '"')
+            {
+                string nextLine;
+                getline(file, nextLine);
+                text += "\n" + nextLine;
+            }
+            text.pop_back();
+        }
+        stories.push_back(Story(stage, text));
+    }
+}
 
 // Combat
 class Combat{
@@ -530,10 +463,15 @@ string resolveChoice(Choice c){
 
         Puzzle p = puzzles[c.resultID];
 
-        cout << p.question << endl;
+        cout << "\n" << p.question << endl;
+        cout << "Your answer: ";
 
         string ans;
-        cin >> ans;
+        cin.ignore();
+        getline(cin, ans);
+
+        // convert to lowercase
+        transform(ans.begin(), ans.end(), ans.begin(), ::tolower);
 
         if(ans == p.answer){
 
@@ -547,6 +485,28 @@ string resolveChoice(Choice c){
             return p.nextWrong;
         }
     }
+
+    // if(c.resultType=="PUZZLE"){
+    //
+    //     Puzzle p = puzzles[c.resultID];
+    //
+    //     cout << p.question << endl;
+    //
+    //     string ans;
+    //     cin >> ans;
+    //
+    //     if(ans == p.answer){
+    //
+    //         cout << "Correct!\n";
+    //         player.addScore(30);
+    //         return p.nextCorrect;
+    //     }
+    //     else{
+    //
+    //         cout << "Wrong!\n";
+    //         return p.nextWrong;
+    //     }
+    // }
 
     if(c.resultType=="TRADE"){
 
