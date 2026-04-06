@@ -8,7 +8,7 @@
 
 using namespace std;
 
-// Item
+/ Item Class
 class Item {
 private:
     int id;
@@ -20,98 +20,154 @@ private:
     string effect;
 
 public:
-    Item(int id, string name, string category, int price, int weight, string description, string effect)
-        : id(id), name(name), category(category), price(price), weight(weight), description(description), effect(effect) {}
 
-    int    getId()          const { return id; }
-    string getName()        const { return name; }
-    string getCategory()    const { return category; }
-    int    getPrice()       const { return price; }
-    int    getWeight()      const { return weight; }
+    Item() : id(0), price(0), weight(0) {}
+
+
+    Item(int id, string name, string category, int price, int weight, string description, string effect)
+        : id(id), name(name), category(category), price(price),
+          weight(weight), description(description), effect(effect) {}
+
+    int getId() const { return id; }
+    string getName() const { return name; }
+    string getCategory() const { return category; }
+    int getPrice() const { return price; }
+    int getWeight() const { return weight; }
     string getDescription() const { return description; }
-    string getEffect()      const { return effect; }
+    string getEffect() const { return effect; }
 };
 
-
-// Occupation
+// Occupation Class
 class Occupation {
 private:
     string gender;
     string name;
-    int    startingGold;
+    int startingGold;
     string description;
 
 public:
+
+    Occupation() : startingGold(0) {}
+
     Occupation(string gender, string name, int startingGold, string description)
         : gender(gender), name(name), startingGold(startingGold), description(description) {}
 
-    string getGender()       const { return gender; }
-    string getName()         const { return name; }
-    int    getStartingGold() const { return startingGold; }
-    string getDescription()  const { return description; }
+    string getGender() const { return gender; }
+    string getName() const { return name; }
+    int getStartingGold() const { return startingGold; }
+    string getDescription() const { return description; }
 };
 
-// Story
+// Story Class
 class Story {
 private:
     string stage;
     string text;
 
 public:
+
+    Story() {}
+
     Story(string stage, string text) : stage(stage), text(text) {}
 
     string getStage() const { return stage; }
-    string getText()  const { return text; }
+    string getText() const { return text; }
 };
 
-// Load Story
-void loadStory()
-{
-    ifstream file("story.csv");
-    string line;
-    getline(file, line);
-
-    while(getline(file, line))
-    {
-        if(line.empty()) continue;
-        string stage, text;
-        size_t commaPos = line.find(',');
-        stage = line.substr(0, commaPos);
-        text  = line.substr(commaPos + 1);
-
-        if(!text.empty() && text.front() == '"')
-        {
-            text.erase(0, 1);
-            while(text.back() != '"')
-            {
-                string nextLine;
-                getline(file, nextLine);
-                text += "\n" + nextLine;
-            }
-            text.pop_back();
-        }
-        stories.push_back(Story(stage, text));
-    }
-}
-
-// Combat
-class Combat{
+//Scene Class
+class Scene {
+private:
+    string id;
+    string description;
 
 public:
+
+    Scene() {}
+
+    Scene(string i, string d) : id(i), description(d) {}
+
+    string getId() const { return id; }
+    string getDescription() const { return description; }
+};
+
+// Choice Class
+class Choice {
+private:
+    string parentScene;
+    string text;
+    string resultType;
+    string resultID;
+    string nextScene;
+
+public:
+
+    Choice() {}
+
+
+    Choice(string p, string t, string r, string id, string n)
+        : parentScene(p), text(t), resultType(r), resultID(id), nextScene(n) {}
+
+    string getParentScene() const { return parentScene; }
+    string getText() const { return text; }
+    string getResultType() const { return resultType; }
+    string getResultID() const { return resultID; }
+    string getNextScene() const { return nextScene; }
+};
+
+// Combat Class
+class Combat {
+private:
     string enemyName;
     float enemyHP;
     float enemyAttack;
     string nextWin;
     string nextLose;
-};
-
-class Puzzle{
 
 public:
+
+    Combat() : enemyHP(0), enemyAttack(0) {}
+
+    Combat(string name, float hp, float atk, string win, string lose)
+        : enemyName(name), enemyHP(hp), enemyAttack(atk),
+          nextWin(win), nextLose(lose) {}
+
+    string getEnemyName() const { return enemyName; }
+    float  getEnemyHP() const { return enemyHP; }
+    float  getEnemyAttack() const { return enemyAttack; }
+    string getNextWin() const { return nextWin; }
+    string getNextLose() const { return nextLose; }
+
+    void setEnemyHP(float hp) { enemyHP = hp; }
+    void setEnemyAttack(float atk) { enemyAttack = atk; }
+    void setEnemyName(string n) { enemyName = n; }
+    void setNextWin(string w) { nextWin = w; }
+    void setNextLose(string l) { nextLose = l; }
+};
+
+// Puzzle Class
+class Puzzle {
+private:
     string question;
     string answer;
     string nextCorrect;
     string nextWrong;
+
+public:
+
+    Puzzle() {}
+
+    Puzzle(string q, string a, string correct, string wrong)
+        : question(q), answer(a), nextCorrect(correct), nextWrong(wrong) {}
+
+    string getQuestion() const { return question; }
+    string getAnswer() const { return answer; }
+    string getNextCorrect() const { return nextCorrect; }
+    string getNextWrong() const { return nextWrong; }
+
+    void setQuestion(string q) { question = q; }
+    void setAnswer(string a) { answer = a; }
+    void setNextCorrect(string c) { nextCorrect = c; }
+    void setNextWrong(string w)  { nextWrong = w; }
 };
 
 //Trade
