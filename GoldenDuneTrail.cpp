@@ -23,7 +23,6 @@ public:
 
     Item() : id(0), price(0), weight(0) {}
 
-
     Item(int id, string name, string category, int price, int weight, string description, string effect)
         : id(id), name(name), category(category), price(price),
           weight(weight), description(description), effect(effect) {}
